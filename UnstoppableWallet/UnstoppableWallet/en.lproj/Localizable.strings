@@ -1537,6 +1537,7 @@
 "onboarding.balance.create" = "New Wallet";
 "onboarding.balance.import" = "Import Wallet";
 "onboarding.balance.watch" = "Watch Wallet";
+"onboarding.balance.hardware" = "Link Hardware Wallet";
 
 // Manage Accounts
 
@@ -1676,6 +1677,18 @@
 "watch_address.public_key.invalid_key" = "Invalid Key";
 "watch_address.choose_blockchain" = "Choose Blockchain";
 "watch_address.choose_coin" = "Choose Coin";
+
+// Hardware Address
+
+"hardware_address.title" = "Link Hardware Wallet";
+"hardware_address.by" = "By";
+"hardware_address.hardware_by" = "Hardware By";
+"hardware_address.hardware" = "Next";
+"hardware_address.evm_address" = "EVM Address";
+"hardware_address.tron_address" = "TRON Address";
+"hardware_address.public_key" = "Account xPubKey";
+"hardware_address.choose_blockchain" = "Choose Blockchain";
+"hardware_address.choose_coin" = "Choose Coin";
 
 // Nft Collections
 
