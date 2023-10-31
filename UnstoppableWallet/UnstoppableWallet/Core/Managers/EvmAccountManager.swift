@@ -62,7 +62,7 @@ class EvmAccountManager {
             return
         }
 
-        if initial, account.origin == .restored, !account.watchAccount, !evmAccountRestoreStateManager.isRestored(account: account, blockchainType: blockchainType) {
+        if initial, account.origin == .restored, !account.watchAccount, !account.hardwareAccount, !evmAccountRestoreStateManager.isRestored(account: account, blockchainType: blockchainType) {
             return
         }
 
