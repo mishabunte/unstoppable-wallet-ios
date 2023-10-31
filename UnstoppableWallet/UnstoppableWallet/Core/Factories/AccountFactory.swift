@@ -11,8 +11,8 @@ class AccountFactory {
 
 extension AccountFactory {
     var nextAccountName: String {
-        let nonWatchAccounts = accountManager.accounts.filter { !$0.watchAccount }
-        let order = nonWatchAccounts.count + 1
+        let nonWatchAndHardwareAccounts = accountManager.accounts.filter { !$0.watchAccount && !$0.hardwareAccount }
+        let order = nonWatchAndHardwareAccounts.count + 1
 
         return "Wallet \(order)"
     }
@@ -35,6 +35,13 @@ extension AccountFactory {
 
         return "Watch Wallet \(order)"
     }
+    
+    var nextHardwareAccountName: String {
+        let hardwareAccounts = accountManager.accounts.filter { $0.hardwareAccount }
+        let order = hardwareAccounts.count + 1
+        
+        return "Hardware Wallet \(order)"
+    }
 
     func account(type: AccountType, origin: AccountOrigin, backedUp: Bool, fileBackedUp: Bool, name: String) -> Account {
         Account(
@@ -49,6 +56,18 @@ extension AccountFactory {
     }
 
     func watchAccount(type: AccountType, name: String) -> Account {
+        Account(
+            id: UUID().uuidString,
+            level: accountManager.currentLevel,
+            name: name,
+            type: type,
+            origin: .restored,
+            backedUp: true,
+            fileBackedUp: false
+        )
+    }
+    
+    func hardwareAccount(type: AccountType, name: String) -> Account {
         Account(
             id: UUID().uuidString,
             level: accountManager.currentLevel,
