@@ -147,7 +147,7 @@ class WalletViewItemFactory {
                 .deposit: .enabled,
                 .withdraw: withdrawalEnabled
             ]
-        case .evmPrivateKey, .hdExtendedKey, .mnemonic:
+        case .evmPrivateKey, .hdExtendedKey, .mnemonic, .evmAddressHardware, .tronAddressHardware, .hdExtendedKeyHardware:
             return [
                 .send: .enabled,
                 .receive: .enabled,

@@ -32,6 +32,16 @@ class Account: Identifiable {
             return false
         }
     }
+        
+    var hardwareAccount: Bool {
+        switch type {
+        case .evmAddressHardware, .tronAddressHardware, .hdExtendedKeyHardware:
+            return true
+        default:
+            return false
+        }
+    }
+
 
     var cexAccount: Bool {
         switch type {
@@ -60,6 +70,7 @@ class Account: Identifiable {
         switch type {
         case .mnemonic: return true
         case .hdExtendedKey, .evmAddress, .tronAddress, .evmPrivateKey, .cex: return false
+        case .hdExtendedKeyHardware, .evmAddressHardware, .tronAddressHardware: return false
         }
     }
 }

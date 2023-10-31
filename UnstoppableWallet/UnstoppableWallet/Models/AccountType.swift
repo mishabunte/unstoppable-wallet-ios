@@ -10,8 +10,11 @@ enum AccountType {
     case mnemonic(words: [String], salt: String, bip39Compliant: Bool)
     case evmPrivateKey(data: Data)
     case evmAddress(address: EvmKit.Address)
+    case evmAddressHardware(address: EvmKit.Address)
     case tronAddress(address: TronKit.Address)
+    case tronAddressHardware(address: TronKit.Address)
     case hdExtendedKey(key: HDExtendedKey)
+    case hdExtendedKeyHardware(key: HDExtendedKey)
     case cex(cexAccount: CexAccount)
 
     var mnemonicSeed: Data? {
@@ -42,9 +45,15 @@ enum AccountType {
             privateData = data
         case let .evmAddress(address):
             privateData = address.hex.hs.data
+        case let .evmAddressHardware(address):
+            privateData = address.hex.hs.data
         case let .tronAddress(address):
             privateData = address.hex.hs.data
+        case let .tronAddressHardware(address):
+            privateData = address.hex.hs.data
         case let .hdExtendedKey(key):
+            privateData = key.serialized
+        case let .hdExtendedKeyHardware(key):
             privateData = key.serialized
         case let .cex(cexAccount):
             privateData = cexAccount.uniqueId.data(using: .utf8) ?? Data() // always non-null
@@ -79,7 +88,7 @@ enum AccountType {
             case (.tron, .native), (.tron, .eip20): return true
             default: return false
             }
-        case let .hdExtendedKey(key):
+        case .hdExtendedKey(let key), .hdExtendedKeyHardware(let key):
             switch token.blockchainType {
             case .bitcoin, .litecoin:
                 guard let derivation = token.type.derivation, key.purposes.contains(where: { $0.mnemonicDerivation == derivation }) else {
@@ -96,7 +105,7 @@ enum AccountType {
             default:
                 return false
             }
-        case .evmPrivateKey, .evmAddress:
+        case .evmPrivateKey, .evmAddress, .evmAddressHardware:
             switch (token.blockchainType, token.type) {
             case (.ethereum, .native), (.ethereum, .eip20): return true
             case (.binanceSmartChain, .native), (.binanceSmartChain, .eip20): return true
@@ -108,7 +117,7 @@ enum AccountType {
             case (.optimism, .native), (.optimism, .eip20): return true
             default: return false
             }
-        case .tronAddress:
+        case .tronAddress, .tronAddressHardware:
             switch (token.blockchainType, token.type) {
             case (.tron, .native), (.tron, .eip20): return true
             default: return false
@@ -120,14 +129,14 @@ enum AccountType {
 
     var canAddTokens: Bool {
         switch self {
-        case .mnemonic, .evmPrivateKey: return true
+        case .mnemonic, .evmPrivateKey, .evmAddressHardware: return true
         default: return false
         }
     }
 
     var supportsWalletConnect: Bool {
         switch self {
-        case .mnemonic, .evmPrivateKey: return true
+        case .mnemonic, .evmPrivateKey, .evmAddressHardware: return true
         default: return false
         }
     }
@@ -155,8 +164,12 @@ enum AccountType {
             return "EVM Private Key"
         case .evmAddress:
             return "EVM Address"
+        case .evmAddressHardware:
+            return "EVM Address Hardware"
         case .tronAddress:
             return "TRON Address"
+        case .tronAddressHardware:
+            return "TRON Address Hardware"
         case let .hdExtendedKey(key):
             switch key {
             case .private:
@@ -171,6 +184,16 @@ enum AccountType {
                 default: return ""
                 }
             }
+        case let .hdExtendedKeyHardware(key):
+            switch key {
+            case .public:
+                switch key.derivedType {
+                case .account: return "Account xPubKey Hardware"
+                default: return ""
+                }
+            default:
+                return ""
+            }
         case let .cex(cexAccount):
             return cexAccount.cex.title
         }
@@ -178,9 +201,9 @@ enum AccountType {
 
     var detailedDescription: String {
         switch self {
-        case let .evmAddress(address):
+        case .evmAddress(let address), .evmAddressHardware(let address):
             return address.eip55.shortened
-        case let .tronAddress(address):
+        case .tronAddress(let address), .tronAddressHardware(let address):
             return address.base58.shortened
         default: return description
         }
@@ -196,6 +219,8 @@ enum AccountType {
             return try? Signer.address(seed: mnemonicSeed, chain: chain)
         case let .evmPrivateKey(data):
             return Signer.address(privateKey: data)
+        case let .evmAddressHardware(address):
+            return address
         default:
             return nil
         }
@@ -251,10 +276,20 @@ extension AccountType {
             } catch {
                 return nil
             }
+        case .hdExtendedKeyHardware:
+            do {
+                return try AccountType.hdExtendedKeyHardware(key: HDExtendedKey(data: uniqueId))
+            } catch {
+                return nil
+            }
         case .evmAddress:
             return (try? EvmKit.Address(hex: string)).map { AccountType.evmAddress(address: $0) }
+        case .evmAddressHardware:
+            return (try? EvmKit.Address(hex: string)).map { AccountType.evmAddressHardware(address: $0) }
         case .tronAddress:
             return (try? TronKit.Address(address: string)).map { AccountType.tronAddress(address: $0) }
+        case .tronAddressHardware:
+            return (try? TronKit.Address(address: string)).map { AccountType.tronAddressHardware(address: $0) }
         case .cex:
             guard let cexAccount = CexAccount.decode(uniqueId: string) else {
                 return nil
@@ -268,8 +303,11 @@ extension AccountType {
         case mnemonic
         case evmPrivateKey = "private_key"
         case evmAddress = "evm_address"
+        case evmAddressHardware = "evm_address_hardware"
         case tronAddress = "tron_address"
+        case tronAddressHardware = "tron_address_hardware"
         case hdExtendedKey = "hd_extended_key"
+        case hdExtendedKeyHardware = "hd_extended_key_hardware"
         case cex
 
         init(_ type: AccountType) {
@@ -277,8 +315,11 @@ extension AccountType {
             case .mnemonic: self = .mnemonic
             case .evmPrivateKey: self = .evmPrivateKey
             case .evmAddress: self = .evmAddress
+            case .evmAddressHardware: self = .evmAddressHardware
             case .tronAddress: self = .tronAddress
+            case .tronAddressHardware: self = .tronAddressHardware
             case .hdExtendedKey: self = .hdExtendedKey
+            case .hdExtendedKeyHardware: self = .hdExtendedKeyHardware
             case .cex: self = .cex
             }
         }
@@ -301,9 +342,15 @@ extension AccountType: Hashable {
             return lhsData == rhsData
         case let (.evmAddress(lhsAddress), .evmAddress(rhsAddress)):
             return lhsAddress == rhsAddress
+        case let (.evmAddressHardware(lhsAddress), .evmAddressHardware(rhsAddress)):
+            return lhsAddress == rhsAddress
         case let (.tronAddress(lhsAddress), .tronAddress(rhsAddress)):
             return lhsAddress == rhsAddress
+        case let (.tronAddressHardware(lhsAddress), .tronAddressHardware(rhsAddress)):
+            return lhsAddress == rhsAddress
         case let (.hdExtendedKey(lhsKey), .hdExtendedKey(rhsKey)):
+            return lhsKey == rhsKey
+        case let (.hdExtendedKeyHardware(lhsKey), .hdExtendedKeyHardware(rhsKey)):
             return lhsKey == rhsKey
         case let (.cex(lhsCexAccount), .cex(rhsCexAccount)):
             return lhsCexAccount == rhsCexAccount
@@ -324,11 +371,20 @@ extension AccountType: Hashable {
         case let .evmAddress(address):
             hasher.combine("evmAddress")
             hasher.combine(address.raw)
+        case let .evmAddressHardware(address):
+            hasher.combine("evmAddressHardware")
+            hasher.combine(address.raw)
         case let .tronAddress(address):
             hasher.combine("tronAddress")
             hasher.combine(address.raw)
+        case let .tronAddressHardware(address):
+            hasher.combine("tronAddressHardware")
+            hasher.combine(address.raw)
         case let .hdExtendedKey(key):
             hasher.combine("hdExtendedKey")
+            hasher.combine(key)
+        case let .hdExtendedKeyHardware(key):
+            hasher.combine("hdExtendedKeyHardware")
             hasher.combine(key)
         case let .cex(cexAccount):
             hasher.combine("cex")

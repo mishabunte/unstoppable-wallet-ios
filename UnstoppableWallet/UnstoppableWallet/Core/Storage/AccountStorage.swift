@@ -50,12 +50,24 @@ class AccountStorage {
             }
 
             type = .evmAddress(address: EvmKit.Address(raw: data))
+        case .evmAddressHardware:
+            guard let data = recoverData(id: id, typeName: typeName, keyName: .data) else {
+                return nil
+            }
+
+            type = .evmAddressHardware(address: EvmKit.Address(raw: data))
         case .tronAddress:
             guard let data = recoverData(id: id, typeName: typeName, keyName: .data) else {
                 return nil
             }
 
             type = .tronAddress(address: try! TronKit.Address(raw: data))
+        case .tronAddressHardware:
+            guard let data = recoverData(id: id, typeName: typeName, keyName: .data) else {
+                return nil
+            }
+
+            type = .tronAddressHardware(address: try! TronKit.Address(raw: data))
         case .hdExtendedKey:
             guard let data = recoverData(id: id, typeName: typeName, keyName: .data) else {
                 return nil
@@ -66,6 +78,16 @@ class AccountStorage {
             }
 
             type = .hdExtendedKey(key: key)
+        case .hdExtendedKeyHardware:
+            guard let data = recoverData(id: id, typeName: typeName, keyName: .data) else {
+                return nil
+            }
+
+            guard let key = try? HDExtendedKey.deserialize(data: data) else {
+                return nil
+            }
+
+            type = .hdExtendedKeyHardware(key: key)
         case .cex:
             guard let data = recoverData(id: id, typeName: typeName, keyName: .data) else {
                 return nil
@@ -112,11 +134,20 @@ class AccountStorage {
         case .evmAddress(let address):
             typeName = .evmAddress
             dataKey = try store(data: address.raw, id: id, typeName: typeName, keyName: .data)
+        case .evmAddressHardware(let address):
+            typeName = .evmAddressHardware
+            dataKey = try store(data: address.raw, id: id, typeName: typeName, keyName: .data)
         case .tronAddress(let address):
             typeName = .tronAddress
             dataKey = try store(data: address.raw, id: id, typeName: typeName, keyName: .data)
+        case .tronAddressHardware(let address):
+            typeName = .tronAddressHardware
+            dataKey = try store(data: address.raw, id: id, typeName: typeName, keyName: .data)
         case .hdExtendedKey(let key):
             typeName = .hdExtendedKey
+            dataKey = try store(data: key.serialized, id: id, typeName: typeName, keyName: .data)
+        case .hdExtendedKeyHardware(let key):
+            typeName = .hdExtendedKeyHardware
             dataKey = try store(data: key.serialized, id: id, typeName: typeName, keyName: .data)
         case .cex(let cexAccount):
             typeName = .cex
@@ -151,10 +182,16 @@ class AccountStorage {
             try keychainStorage.removeValue(for: secureKey(id: id, typeName: .evmPrivateKey, keyName: .data))
         case .evmAddress:
             try keychainStorage.removeValue(for: secureKey(id: id, typeName: .evmAddress, keyName: .data))
+        case .evmAddressHardware:
+            try keychainStorage.removeValue(for: secureKey(id: id, typeName: .evmAddressHardware, keyName: .data))
         case .tronAddress:
             try keychainStorage.removeValue(for: secureKey(id: id, typeName: .tronAddress, keyName: .data))
+        case .tronAddressHardware:
+            try keychainStorage.removeValue(for: secureKey(id: id, typeName: .tronAddressHardware, keyName: .data))
         case .hdExtendedKey:
             try keychainStorage.removeValue(for: secureKey(id: id, typeName: .hdExtendedKey, keyName: .data))
+        case .hdExtendedKeyHardware:
+            try keychainStorage.removeValue(for: secureKey(id: id, typeName: .hdExtendedKeyHardware, keyName: .data))
         case .cex:
             try keychainStorage.removeValue(for: secureKey(id: id, typeName: .cex, keyName: .data))
         }
@@ -240,8 +277,11 @@ extension AccountStorage {
         case mnemonic
         case evmPrivateKey
         case evmAddress = "address"
+        case evmAddressHardware = "address_hardware"
         case tronAddress
+        case tronAddressHardware
         case hdExtendedKey
+        case hdExtendedKeyHardware
         case cex
     }
 

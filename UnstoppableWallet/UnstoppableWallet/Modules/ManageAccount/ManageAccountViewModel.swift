@@ -55,7 +55,7 @@ class ManageAccountViewModel {
                 "manage_account.backup.has_backup_description".localized
         }
 
-        if !account.watchAccount {
+        if !account.watchAccount && !account.hardwareAccount {
             backupActions.append(.cloudBackedUp(isCloudBackedUp, isManualBackedUp: account.backedUp))
         }
 
@@ -68,8 +68,8 @@ class ManageAccountViewModel {
         switch account.type {
         case .mnemonic: keyActions.append(contentsOf: [.recoveryPhrase, .privateKeys, .publicKeys])
         case .evmPrivateKey: keyActions.append(contentsOf: [.privateKeys, .publicKeys])
-        case .evmAddress, .tronAddress: ()
-        case let .hdExtendedKey(key):
+        case .evmAddress, .tronAddress, .evmAddressHardware, .tronAddressHardware: ()
+        case .hdExtendedKey(let key), .hdExtendedKeyHardware(let key):
             switch key {
             case .private: keyActions.append(contentsOf: [.privateKeys, .publicKeys])
             case .public: keyActions.append(contentsOf: [.publicKeys])
