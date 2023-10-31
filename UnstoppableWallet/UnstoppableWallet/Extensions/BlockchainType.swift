@@ -100,19 +100,19 @@ extension BlockchainType {
         switch accountType {
         case .mnemonic:
             return true
-        case .hdExtendedKey(let key):
+        case .hdExtendedKey(let key), .hdExtendedKeyHardware(let key):
             switch self {
             case .bitcoin: return key.coinTypes.contains(where: { $0 == .bitcoin })
             case .litecoin: return key.coinTypes.contains(where: { $0 == .litecoin })
             case .bitcoinCash, .ecash, .dash: return key.coinTypes.contains(where: { $0 == .bitcoin }) && key.purposes.contains(where: { $0 == .bip44 })
             default: return false
             }
-        case .evmPrivateKey, .evmAddress:
+        case .evmPrivateKey, .evmAddress, .evmAddressHardware:
             switch self {
             case .ethereum, .binanceSmartChain, .polygon, .avalanche, .optimism, .arbitrumOne, .gnosis, .fantom: return true
             default: return false
             }
-        case .tronAddress:
+        case .tronAddress, .tronAddressHardware:
             return self == .tron
         default:
             return false
