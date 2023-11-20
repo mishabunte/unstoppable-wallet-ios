@@ -24,11 +24,15 @@ class SwapApproveConfirmationViewController: SendEvmTransactionViewController {
 
         title = "confirm".localized
 
-        bottomWrapper.addSubview(approveButton)
-
-        approveButton.set(style: .yellow)
-        approveButton.setTitle("button.approve".localized, for: .normal)
-        approveButton.addTarget(self, action: #selector(onTapApprove), for: .touchUpInside)
+        if transactionViewModel.isHardwareSigner {
+            addScanToTransmitSection()
+        } else {
+            bottomWrapper.addSubview(approveButton)
+            
+            approveButton.set(style: .yellow)
+            approveButton.setTitle("button.approve".localized, for: .normal)
+            approveButton.addTarget(self, action: #selector(onTapApprove), for: .touchUpInside)
+        }
 
         subscribe(disposeBag, transactionViewModel.sendEnabledDriver) { [weak self] in self?.approveButton.isEnabled = $0 }
     }
