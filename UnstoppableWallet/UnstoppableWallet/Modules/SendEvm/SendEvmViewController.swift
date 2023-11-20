@@ -21,7 +21,7 @@ class SendEvmViewController: ThemeViewController {
 
     private let recipientCell: RecipientAddressInputCell
     private let recipientCautionCell: RecipientAddressCautionCell
-
+    
     private let buttonCell = PrimaryButtonCell()
 
     private var isLoaded = false
@@ -82,7 +82,7 @@ class SendEvmViewController: ThemeViewController {
         recipientCell.onOpenViewController = { [weak self] in self?.present($0, animated: true) }
 
         recipientCautionCell.onChangeHeight = { [weak self] in self?.reloadTable() }
-
+        
         buttonCell.set(style: .yellow)
         buttonCell.title = "send.next_button".localized
         buttonCell.onTap = { [weak self] in
@@ -102,7 +102,7 @@ class SendEvmViewController: ThemeViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
+        
         if !keyboardShown {
             keyboardShown = true
             _ = amountCell.becomeFirstResponder()
@@ -196,7 +196,7 @@ extension SendEvmViewController: SectionsDataSource {
                     )
             )
         }
-
+        
         sections.append(
                 Section(
                         id: "button",

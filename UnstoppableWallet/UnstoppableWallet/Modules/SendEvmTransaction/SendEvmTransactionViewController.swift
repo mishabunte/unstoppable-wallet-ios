@@ -19,6 +19,7 @@ class SendEvmTransactionViewController: ThemeViewController {
 
     private let nonceCell = BaseThemeCell()
     private let feeCell: FeeCell
+    private let scanSignatureCell = HardwareWalletScanSignatureCell()
 
     private var sectionViewItems = [SendEvmTransactionViewModel.SectionViewItem]()
     private let caution1Cell = TitledHighlightedDescriptionCell()
@@ -32,12 +33,29 @@ class SendEvmTransactionViewController: ThemeViewController {
         self.settingsViewModel = settingsViewModel
 
         feeCell = FeeCell(viewModel: settingsViewModel.feeViewModel, title: "fee_settings.network_fee".localized)
-
+        
+        scanSignatureCell.isHidden = true
+        
         super.init()
     }
 
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    private let scanToTransmitButton = PrimaryButton()
+    
+    func addScanToTransmitSection() {
+        let label = UILabel()
+        label.text = "Verify and sign the transaction on your hardware wallet, then, hit 'Scan to Transmit' to scan the displayed QR code and complete the process"
+        label.numberOfLines = 0
+        label.textAlignment = .center
+        bottomWrapper.addSubview(label)
+        
+        bottomWrapper.addSubview(scanToTransmitButton)
+        scanToTransmitButton.setTitle("Scan to transmit", for: .normal)
+        scanToTransmitButton.set(style: .yellow)
+        scanToTransmitButton.addTarget(self, action: #selector(onTapScanToTransmit), for: .touchUpInside)
     }
 
     override func viewDidLoad() {
@@ -77,10 +95,17 @@ class SendEvmTransactionViewController: ThemeViewController {
 
         subscribe(disposeBag, settingsViewModel.nonceViewModel.alteredStateSignal) { [weak self] in self?.tableView.reload() }
         subscribe(disposeBag, settingsViewModel.nonceViewModel.valueDriver) { [weak self] in self?.sync(nonce: $0) }
+        
+        subscribe(disposeBag, transactionViewModel.hardwareWalletSignRequestSignal) { [weak self] in self?.handleHardwareWalletSignRequest() }
+        subscribe(disposeBag, transactionViewModel.hardwareWalletSignRequestDoneSignal) { [weak self] in self?.handleHardwareWalletSignRequestDone(error: $0) }
+        scanSignatureCell.didFetch = { scannedString in self.handleHardwareWalletSignatureScan(scannedString) }
 
         tableView.buildSections()
 
         isLoaded = true
+        
+        bottomWrapper.isHidden = transactionViewModel.isHardwareSigner
+        
     }
 
     private func sync(nonce: Decimal?) {
@@ -94,7 +119,7 @@ class SendEvmTransactionViewController: ThemeViewController {
                 ])
         )
     }
-
+    
     private func handle(cautions: [TitledCaution]) {
         if let caution = cautions.first {
             caution1Cell.bind(caution: caution)
@@ -119,6 +144,41 @@ class SendEvmTransactionViewController: ThemeViewController {
     func handleSendSuccess(transactionHash: Data) {
         dismiss(animated: true)
     }
+    
+    func handleHardwareWalletSignRequest() {
+        print("SendTransactionViewController.handleHardwareWalletSignRequest")
+        App.instance?.appManager.disableBlurManager()
+    }
+    
+    func handleHardwareWalletSignRequestDone(error: String?) {
+        print("SendTransactionViewController.handleHardwareWalletSignRequestDone", error)
+        App.instance?.appManager.enableBlurManager()
+        if error == nil {
+            //scanSignatureCell.isHidden = false
+            bottomWrapper.isHidden = false
+            self.reloadTable()
+            //self.title = "Scan to Transmit"
+        } else {
+            //HudHelper.instance.show(banner: .error(string: error!))
+            self.navigationController?.popViewController(animated: true)
+        }
+    }
+    
+    func handleHardwareWalletSignatureScan(_ qrCodeString: String) {
+        if (qrCodeString.starts(with: "evm.sig:0x")) {
+            let signatureHex = String(qrCodeString.dropFirst("evm.sig:0x".count))
+            //bottomWrapper.isHidden = false
+            transactionViewModel.sendWithSignature(signatureHex: signatureHex)
+        } else {
+            HudHelper.instance.show(banner: .error(string: "Wrong signature"))
+        }
+    }
+    
+    @objc func onTapScanToTransmit() {
+        let scanQrViewController = ScanQrViewController()
+        scanQrViewController.didFetch = { [weak self] in self?.handleHardwareWalletSignatureScan($0) }
+        present(scanQrViewController, animated: true)
+    }
 
     private func openInfo(title: String, description: String) {
         let viewController = BottomSheetModule.description(title: title, text: description)
@@ -135,6 +195,9 @@ class SendEvmTransactionViewController: ThemeViewController {
 
     func handleSendFailed(error: String) {
         HudHelper.instance.show(banner: .error(string: error))
+        if transactionViewModel.isHardwareSigner {
+            self.navigationController?.popViewController(animated: true)
+        }
     }
 
     private func reloadTable() {
@@ -232,6 +295,22 @@ extension SendEvmTransactionViewController: SectionsDataSource {
                         ]
                 )
         )
+        
+        if (!scanSignatureCell.isHidden) {
+            settingsSections.append(
+                Section(
+                    id: "signature-scan",
+                    headerState: .margin(height: .margin16),
+                    rows: [
+                        StaticRow(
+                            cell: scanSignatureCell,
+                            id: "signature-scan",
+                            height: scanSignatureCell.cellHeight
+                        )
+                    ]
+                )
+            )
+        }
 
         let cautionsSections: [SectionProtocol] = [
             Section(

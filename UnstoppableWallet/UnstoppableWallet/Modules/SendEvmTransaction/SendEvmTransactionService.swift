@@ -15,11 +15,17 @@ protocol ISendEvmTransactionService {
 
     var sendState: SendEvmTransactionService.SendState { get }
     var sendStateObservable: Observable<SendEvmTransactionService.SendState> { get }
+    
+    var hardwareWalletState: SendEvmTransactionService.HardwareWalletState { get }
+    var hardwareWalletStateObservable: Observable<SendEvmTransactionService.HardwareWalletState> { get }
 
     var ownAddress: EvmKit.Address { get }
+    
+    var isHardwareSigner: Bool { get }
 
     func methodName(input: Data) -> String?
     func send()
+    func sendWithSignature(rawTransaction: RawTransaction, signatureHex: String)
 }
 
 class SendEvmTransactionService {
@@ -43,6 +49,13 @@ class SendEvmTransactionService {
     private(set) var sendState: SendState = .idle {
         didSet {
             sendStateRelay.accept(sendState)
+        }
+    }
+    
+    private let hardwareWalletStateRelay = PublishRelay<HardwareWalletState>()
+    private(set) var hardwareWalletState: HardwareWalletState = .idle {
+        didSet {
+            hardwareWalletStateRelay.accept(hardwareWalletState)
         }
     }
 
@@ -69,8 +82,18 @@ class SendEvmTransactionService {
     private var evmBalance: BigUInt {
         evmKit.accountState?.balance ?? 0
     }
+    
+    private var syncPaused = false
+    func pauseSync() {
+        syncPaused = true
+    }
 
     private func sync(status: DataStatus<FallibleData<EvmSendSettingsService.Transaction>>) {
+        
+        if syncPaused {
+            return
+        }
+        
         switch status {
         case .loading:
             state = .notReady(errors: [], warnings: [])
@@ -84,6 +107,9 @@ class SendEvmTransactionService {
             let errors = sendData.errors + fallibleTransaction.errors
             if errors.isEmpty {
                 state = .ready(warnings: warnings)
+                if isHardwareSigner {
+                    hardwareWalletSendSignRequest()
+                }
             } else {
                 state = .notReady(errors: errors, warnings: warnings)
             }
@@ -91,6 +117,11 @@ class SendEvmTransactionService {
     }
 
     private func syncDataState(transaction: EvmSendSettingsService.Transaction? = nil) {
+        
+        if syncPaused {
+            return
+        }
+        
         let transactionData = transaction?.transactionData ?? sendData.transactionData
 
         dataState = DataState(
@@ -112,6 +143,10 @@ extension SendEvmTransactionService: ISendEvmTransactionService {
     var sendStateObservable: Observable<SendState> {
         sendStateRelay.asObservable()
     }
+    
+    var hardwareWalletStateObservable: Observable<HardwareWalletState> {
+        hardwareWalletStateRelay.asObservable()
+    }
 
     var ownAddress: EvmKit.Address {
         evmKit.receiveAddress
@@ -119,6 +154,10 @@ extension SendEvmTransactionService: ISendEvmTransactionService {
 
     var blockchainType: BlockchainType {
         evmKitWrapper.blockchainType
+    }
+    
+    var isHardwareSigner: Bool {
+        evmKitWrapper.hardwareSigner != nil
     }
 
     func methodName(input: Data) -> String? {
@@ -147,6 +186,63 @@ extension SendEvmTransactionService: ISendEvmTransactionService {
                 })
                 .disposed(by: disposeBag)
     }
+    
+    func sendWithSignature(rawTransaction: RawTransaction, signatureHex: String) {
+        
+        sendState = .sending
+        
+        evmKitWrapper.sendSingle(rawTransaction: rawTransaction, signatureHex: signatureHex)
+                .subscribeOn(ConcurrentDispatchQueueScheduler(qos: .userInitiated))
+                .subscribe(onSuccess: { [weak self] fullTransaction in
+                    self?.sendState = .sent(transactionHash: fullTransaction.transaction.hash)
+                }, onError: { error in
+                    self.sendState = .failed(error: error)
+                })
+                .disposed(by: disposeBag)
+    }
+    
+    func hardwareWalletSendSignRequest() {
+        print("--------------------------hardwareSignerSendSignRequest")
+        
+        hardwareWalletState = .sendingSignRequest
+        // pause sync
+        
+        pauseSync()
+        
+        // get unsigned transaction hex
+        guard case .ready = state, case .completed(let fallibleTransaction) = settingsService.status else {
+            return
+        }
+        let transaction = fallibleTransaction.data
+        
+        evmKitWrapper.getRawTransactionSingle(
+            transactionData: transaction.transactionData,
+            gasPrice: transaction.gasData.price,
+            gasLimit: transaction.gasData.limit,
+            nonce: transaction.nonce)
+        .subscribeOn(ConcurrentDispatchQueueScheduler(qos: .userInitiated))
+        .subscribe(onSuccess: { [weak self] rawTransaction in
+            //self?.sendState = .sent(transactionHash: fullTransaction.transaction.hash)
+            print("rawTransaction", rawTransaction)
+            //jevmKitWrapper.hardwareSigner?.sendSignRequest(unsignedTransactionHex) {
+                
+            //}
+            self?.hardwareWalletState = .sendingSignRequest
+            
+            HardwareWalletKit.shared.signEvmRequest(address: self!.ownAddress.eip55, chainId: self!.evmKit.chain.id, rawTransaction: rawTransaction) { error in
+                if (error == nil) {
+                    self!.hardwareWalletState = .receivingSignature
+                } else {
+                    self!.hardwareWalletState = .sendingSignRequestError
+                }
+            }
+            
+        }, onError: { error in
+            self.sendState = .failed(error: error)
+        })
+        .disposed(by: disposeBag)
+    }
+    
 
 }
 
@@ -169,6 +265,14 @@ extension SendEvmTransactionService {
         case sending
         case sent(transactionHash: Data)
         case failed(error: Error)
+    }
+    
+    enum HardwareWalletState {
+        case idle
+        case sendingSignRequest
+        case sendingSignRequestError
+        case receivingSignature
+        case signed
     }
 
     enum TransactionError: Error {

@@ -23,13 +23,14 @@ class SendEvmConfirmationViewController: SendEvmTransactionViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         switch mode {
         case .send:
             title = "confirm".localized
-
+            if transactionViewModel.isHardwareSigner {
+                break
+            }
             bottomWrapper.addSubview(sendSliderButton)
-
             sendSliderButton.title = "send.confirmation.slide_to_send".localized
             sendSliderButton.finalTitle = "send.confirmation.sending".localized
             sendSliderButton.slideImage = UIImage(named: "arrow_medium_2_right_24")
@@ -40,33 +41,39 @@ class SendEvmConfirmationViewController: SendEvmTransactionViewController {
         case .resend:
             title = "tx_info.options.speed_up".localized
             topDescription = "send.confirmation.resend_description".localized
-
+            if transactionViewModel.isHardwareSigner {
+                break
+            }
             bottomWrapper.addSubview(sendButton)
-
             sendButton.set(style: .yellow)
             sendButton.setTitle("send.confirmation.resend".localized, for: .normal)
             sendButton.addTarget(self, action: #selector(onTapSend), for: .touchUpInside)
         case .cancel:
             title = "tx_info.options.cancel".localized
             topDescription = "send.confirmation.cancel_description".localized
-
+            if transactionViewModel.isHardwareSigner {
+                break
+            }
             bottomWrapper.addSubview(sendButton)
-
             sendButton.set(style: .yellow)
             sendButton.setTitle("send.confirmation.cancel".localized, for: .normal)
             sendButton.addTarget(self, action: #selector(onTapSend), for: .touchUpInside)
         }
-
+        
+        if transactionViewModel.isHardwareSigner {
+            addScanToTransmitSection()
+        }
+        
         subscribe(disposeBag, transactionViewModel.sendEnabledDriver) { [weak self] enabled in
             self?.sendSliderButton.isEnabled = enabled
             self?.sendButton.isEnabled = enabled
         }
     }
-
+    
     @objc private func onTapSend() {
         transactionViewModel.send()
     }
-
+    
     override func handleSending() {
         HudHelper.instance.show(banner: .sending)
     }
@@ -82,7 +89,7 @@ class SendEvmConfirmationViewController: SendEvmTransactionViewController {
 
         sendSliderButton.reset()
     }
-
+    
 }
 
 extension SendEvmConfirmationViewController {

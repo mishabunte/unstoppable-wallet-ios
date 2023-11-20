@@ -27,6 +27,13 @@ class SendEvmTransactionViewModel {
     private let sendingRelay = PublishRelay<()>()
     private let sendSuccessRelay = PublishRelay<Data>()
     private let sendFailedRelay = PublishRelay<String>()
+    
+    private let hardwareWalletSignRequestRelay = PublishRelay<()>()
+    private let hardwareWalletSignRequestDoneRelay = PublishRelay<String?>()
+    
+    var isHardwareSigner: Bool {
+        service.isHardwareSigner
+    }
 
     init(service: ISendEvmTransactionService, coinServiceFactory: EvmCoinServiceFactory, cautionsFactory: SendEvmCautionsFactory, evmLabelManager: EvmLabelManager, contactLabelService: ContactLabelService) {
         self.service = service
@@ -37,6 +44,8 @@ class SendEvmTransactionViewModel {
 
         subscribe(disposeBag, service.stateObservable) { [weak self] in self?.sync(state: $0) }
         subscribe(disposeBag, service.sendStateObservable) { [weak self] in self?.sync(sendState: $0) }
+        
+        subscribe(disposeBag, service.hardwareWalletStateObservable) { [weak self] in self?.sync(hardwareWalletState: $0) }
 
         subscribe(disposeBag, contactLabelService.stateObservable) { [weak self] _ in
             self?.reSyncServiceState()
@@ -48,6 +57,7 @@ class SendEvmTransactionViewModel {
 
     private func reSyncServiceState() {
         sync(state: service.state)
+        sync(hardwareWalletState: service.hardwareWalletState)
     }
 
     private func sync(state: SendEvmTransactionService.State) {
@@ -61,6 +71,19 @@ class SendEvmTransactionViewModel {
         }
 
         sectionViewItemsRelay.accept(items(dataState: service.dataState))
+    }
+    
+    private func sync(hardwareWalletState: SendEvmTransactionService.HardwareWalletState) {
+       print("-------------------------SendEvmTransactionViewMode.sync", hardwareWalletState)
+        switch hardwareWalletState {
+        case .sendingSignRequest:
+            hardwareWalletSignRequestRelay.accept(())
+        case .sendingSignRequestError:
+            hardwareWalletSignRequestDoneRelay.accept(HardwareWalletKit.shared.lastError)
+        case .receivingSignature:
+            hardwareWalletSignRequestDoneRelay.accept(nil)
+        default: break
+        }
     }
 
     private func formatted(slippage: Decimal) -> String? {
@@ -740,9 +763,20 @@ extension SendEvmTransactionViewModel {
     var sendFailedSignal: Signal<String> {
         sendFailedRelay.asSignal()
     }
+    
+    var hardwareWalletSignRequestSignal: Signal<()> {
+        hardwareWalletSignRequestRelay.asSignal()
+    }
+    var hardwareWalletSignRequestDoneSignal: Signal<String?> {
+        hardwareWalletSignRequestDoneRelay.asSignal()
+    }
 
     func send() {
         service.send()
+    }
+    
+    func sendWithSignature(signatureHex: String) {
+        service.sendWithSignature(rawTransaction: HardwareWalletKit.shared.rawTransaction!, signatureHex: signatureHex)
     }
 
 }
