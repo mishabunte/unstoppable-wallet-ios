@@ -52,6 +52,7 @@
 "alert.created" = "Created";
 "alert.imported" = "Imported";
 "alert.wallet_added" = "Wallet Added";
+"alert.wallet_linked" = "Wallet Linked";
 "alert.deleted" = "Deleted";
 "alert.waiting_for_session" = "Waiting for Session";
 "alert.try_again" = "Try Again";

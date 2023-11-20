@@ -20,6 +20,7 @@ extension HudHelper {
         case created
         case imported
         case walletAdded
+        case walletLinked
         case deleted
         case noInternet
         case disconnectingWalletConnect
@@ -56,6 +57,7 @@ extension HudHelper {
             case .created: image = UIImage(named: "add_to_wallet_24")
             case .imported: image = UIImage(named: "add_to_wallet_2_24")
             case .walletAdded: image = UIImage(named: "binocule_24")
+            case .walletLinked: image = UIImage(named: "hardware_wallet")
             case .deleted: image = UIImage(named: "trash_24")
             case .noInternet: image = UIImage(named: "no_internet_24")
             case .waitingForSession: image = UIImage(named: "disconnecting_2_24")
@@ -76,7 +78,7 @@ extension HudHelper {
             switch self {
             case .addedToWatchlist, .alreadyAddedToWallet, .notSupportedYet, .sent, .swapped, .approved, .revoked, .attention: return .themeJacob
             case .removedFromWallet, .removedFromWatchlist,  .deleted, .noInternet, .disconnectedWalletConnect, .error: return .themeLucian
-            case .addedToWallet, .copied, .saved, .savedToCloud, .done, .restored, .created, .imported, .walletAdded, .enabled, .success: return .themeRemus
+            case .addedToWallet, .copied, .saved, .savedToCloud, .done, .restored, .created, .imported, .walletAdded, .walletLinked, .enabled, .success: return .themeRemus
             case .waitingForSession, .disconnectingWalletConnect, .enabling, .sending, .swapping, .approving, .revoking: return .themeGray
             }
         }
@@ -97,6 +99,7 @@ extension HudHelper {
             case .created: return "alert.created".localized
             case .imported: return "alert.imported".localized
             case .walletAdded: return "alert.wallet_added".localized
+            case .walletLinked: return "alert.wallet_linked".localized
             case .deleted: return "alert.deleted".localized
             case .noInternet: return "alert.no_internet".localized
             case .waitingForSession: return "alert.waiting_for_session".localized
