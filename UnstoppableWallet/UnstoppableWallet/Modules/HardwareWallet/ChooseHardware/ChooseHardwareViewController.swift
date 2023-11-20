@@ -48,7 +48,7 @@ class ChooseHardwareViewController: CoinToggleViewController {
             self?.hardwareButton.isEnabled = enabled
         }
         subscribe(disposeBag, viewModel.hardwareSignal) { [weak self] in
-            HudHelper.instance.show(banner: .walletAdded)
+            HudHelper.instance.show(banner: .walletLinked)
             (self?.sourceViewController ?? self)?.dismiss(animated: true)
         }
         subscribe(disposeBag, viewModel.hardwareEnabledDriver) { [weak self] enabled in

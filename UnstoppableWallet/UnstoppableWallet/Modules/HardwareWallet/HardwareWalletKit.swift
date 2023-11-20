@@ -1,5 +1,6 @@
 import CoreNFC
 import SwiftUI
+import EvmKit
 
 class HardwareWalletKit: NSObject, NFCNDEFReaderSessionDelegate {
     
@@ -22,8 +23,9 @@ class HardwareWalletKit: NSObject, NFCNDEFReaderSessionDelegate {
     
     //var nfcMessage = "" // ?
     //var action: String? // ?
-    var txraw: String? // ?
+    var rawTransaction: RawTransaction?
     //var isDataTransmitted: Bool = false
+    var lastError: String?
     
     func readerSessionDidBecomeActive(_ session: NFCNDEFReaderSession) {
         //
@@ -32,11 +34,9 @@ class HardwareWalletKit: NSObject, NFCNDEFReaderSessionDelegate {
 
     func readerSession(_ session: NFCNDEFReaderSession, didInvalidateWithError error: Error) {
         //print("readerSeesion didInvalidateWithError")
-        
-        App.instance?.appManager.enableBlurManager()
-        
+        lastError = self.hitoNfcRequest.isDataTransmitted ? nil : error.localizedDescription
         DispatchQueue.main.async {
-            self.completion?(self.hitoNfcRequest.isDataTransmitted ? self.txraw : nil)
+            self.completion?(self.lastError)
         }
     }
 
@@ -98,19 +98,20 @@ class HardwareWalletKit: NSObject, NFCNDEFReaderSessionDelegate {
     
     var hitoNfcRequest: HitoNfcRequest = HitoNfcRequest(type: .signEvmTransaction, payload: "")
 
-    func signEvmRequest(address: String, unsignedTransaction: String, completion: @escaping (String?) -> Void) {
-        
-        App.instance?.appManager.disableBlurManager()
+    func signEvmRequest(address: String, chainId: Int, rawTransaction: RawTransaction, completion: @escaping (String?) -> Void) {
         
         self.completion = completion
+        self.rawTransaction = rawTransaction
         
-        print("sendtoDevice", address, unsignedTransaction)
-        let payload = "evm.sign:" + address + ":" + unsignedTransaction
+        let emptySignature = Signature(v: 0, r: 0, s: 0)
+        let data = TransactionBuilder.encode(rawTransaction: rawTransaction, signature: emptySignature, chainId: chainId)
+        let transactionHex = "0x" + data.toHexString()
+        
+        print("sendtoDevice", address, transactionHex)
+        let payload = "evm.sign:" + address + ":" + transactionHex
         print(payload)
         
         hitoNfcRequest = HitoNfcRequest(type: .signEvmTransaction, payload: payload)
-        
-        self.txraw = unsignedTransaction
         
         guard NFCNDEFReaderSession.readingAvailable else {
             completion(nil)

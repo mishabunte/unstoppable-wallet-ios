@@ -53,13 +53,13 @@ class HardwareSignerKitWrapper {
             }
             
             let task = Task {
-                HardwareWalletKit.shared.signEvmRequest(address: evmKit.address.eip55, unsignedTransaction: "0x" + data.toHexString()) { result in
-                    if result == nil {
-                        single(.error(HardwareError.notImplemented))
-                    } else {
+                //HardwareWalletKit.shared.signEvmRequest(address: evmKit.address.eip55, unsignedTransaction: "0x" + data.toHexString()) { result in
+                    //if result == nil {
+                        //single(.error(HardwareError.notImplemented))
+                    //} else {
                         //strongSelf.showScanToTransmit()
-                    }
-                }
+                    //}
+                //}
                 //try? await Task.sleep(nanoseconds: 10 * 1_000_000_000)
                 //single(.error(HardwareError.notImplemented))
             }

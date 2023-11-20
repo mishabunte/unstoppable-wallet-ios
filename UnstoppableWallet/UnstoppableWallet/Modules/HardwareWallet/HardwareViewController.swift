@@ -152,7 +152,7 @@ class HardwareViewController: KeyboardAwareViewController {
 
     private func proceedToNextPage(hardwareType: HardwareModule.HardwareType, accountType: AccountType, name: String) {
         guard let viewController = HardwareModule.viewController(sourceViewController: sourceViewController, hardwareType: hardwareType, accountType: accountType, name: name) else {
-            HudHelper.instance.show(banner: .walletAdded)
+            HudHelper.instance.show(banner: .walletLinked)
             sourceViewController?.dismiss(animated: true)
             return
         }
