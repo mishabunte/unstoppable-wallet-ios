@@ -23,7 +23,8 @@ class ManageAccountsViewModel {
         let sortedItems = items.sorted { $0.account.name.lowercased() < $1.account.name.lowercased() }
 
         let viewState = ViewState(
-                regularViewItems: sortedItems.filter { !$0.account.watchAccount }.map { viewItem(item: $0) },
+                regularViewItems: sortedItems.filter { !$0.account.watchAccount && !$0.account.hardwareAccount}.map { viewItem(item: $0) },
+                hardwareViewItems: sortedItems.filter { $0.account.hardwareAccount }.map { viewItem(item: $0) },
                 watchViewItems: sortedItems.filter { $0.account.watchAccount }.map { viewItem(item: $0) }
         )
 
@@ -46,7 +47,8 @@ class ManageAccountsViewModel {
                 isSubtitleWarning: alertSubtitle != nil,
                 selected: item.isActive,
                 alert: showAlert,
-                watchAccount: item.account.watchAccount
+                watchAccount: item.account.watchAccount,
+                hardwareAccount: item.account.hardwareAccount
         )
     }
 
@@ -88,10 +90,11 @@ extension ManageAccountsViewModel {
 
     struct ViewState {
         let regularViewItems: [ViewItem]
+        let hardwareViewItems: [ViewItem]
         let watchViewItems: [ViewItem]
 
         static var empty: ViewState {
-            ViewState(regularViewItems: [], watchViewItems: [])
+            ViewState(regularViewItems: [], hardwareViewItems: [], watchViewItems: [])
         }
     }
 
@@ -103,6 +106,7 @@ extension ManageAccountsViewModel {
         let selected: Bool
         let alert: Bool
         let watchAccount: Bool
+        let hardwareAccount: Bool
     }
 
 }

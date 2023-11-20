@@ -14,6 +14,7 @@ class ManageAccountsViewController: ThemeViewController {
 
     private let createCell = BaseSelectableThemeCell()
     private let restoreCell = BaseSelectableThemeCell()
+    private let hardwareCell = BaseSelectableThemeCell()
     private let watchCell = BaseSelectableThemeCell()
 
     private var viewState = ManageAccountsViewModel.ViewState.empty
@@ -77,6 +78,17 @@ class ManageAccountsViewController: ThemeViewController {
                 component.text = "onboarding.balance.import".localized
             },
         ]))
+        
+        hardwareCell.set(backgroundStyle: .lawrence)
+        CellBuilder.build(cell: hardwareCell, elements: [.image20, .text])
+        hardwareCell.bind(index: 0, block: { (component: ImageComponent) in
+            component.imageView.image = UIImage(named: "hardware_wallet")?.withTintColor(.themeJacob)
+        })
+        hardwareCell.bind(index: 1, block: { (component: TextComponent) in
+            component.font = .body
+            component.textColor = .themeJacob
+            component.text = "onboarding.balance.hardware".localized
+        })
 
         watchCell.set(backgroundStyle: .lawrence, isLast: true)
         CellBuilder.build(cell: watchCell, elements: [.image20, .text])
@@ -113,6 +125,11 @@ class ManageAccountsViewController: ThemeViewController {
 
     private func onTapRestore() {
         let viewController = RestoreTypeModule.viewController(type: .wallet, sourceViewController: self, returnViewController: createAccountListener)
+        present(viewController, animated: true)
+    }
+    
+    private func onTapHardware() {
+        let viewController = HardwareModule.viewController(sourceViewController: createAccountListener)
         present(viewController, animated: true)
     }
 
@@ -185,8 +202,8 @@ extension ManageAccountsViewController: SectionsDataSource {
                     },
                 ]),
                 .image20 { component in
-                    component.isHidden = !viewItem.watchAccount
-                    component.imageView.image = UIImage(named: "binocule_20")?.withTintColor(.themeGray)
+                    component.isHidden = !viewItem.watchAccount && !viewItem.hardwareAccount
+                    component.imageView.image = UIImage(named: viewItem.watchAccount ? "binocule_20" : "hardware_wallet")?.withTintColor(.themeGray)
                 },
                 .secondaryCircleButton { [weak self] component in
                     component.button.set(
@@ -223,6 +240,13 @@ extension ManageAccountsViewController: SectionsDataSource {
                 }
             ),
             Section(
+                id: "hardware-view-items",
+                footerState: .margin(height: viewState.hardwareViewItems.isEmpty ? 0 : .margin32),
+                rows: viewState.hardwareViewItems.enumerated().map { index, viewItem in
+                    row(viewItem: viewItem, index: index, isFirst: index == 0, isLast: index == viewState.hardwareViewItems.count - 1)
+                }
+            ),
+            Section(
                 id: "watch-view-items",
                 footerState: .margin(height: viewState.watchViewItems.isEmpty ? 0 : .margin32),
                 rows: viewState.watchViewItems.enumerated().map { index, viewItem in
@@ -249,6 +273,15 @@ extension ManageAccountsViewController: SectionsDataSource {
                         autoDeselect: true,
                         action: { [weak self] in
                             self?.onTapRestore()
+                        }
+                    ),
+                    StaticRow(
+                        cell: hardwareCell,
+                        id: "hardware",
+                        height: .heightCell48,
+                        autoDeselect: true,
+                        action: { [weak self] in
+                            self?.onTapHardware()
                         }
                     ),
                     StaticRow(
