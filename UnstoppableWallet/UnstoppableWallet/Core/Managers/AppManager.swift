@@ -65,6 +65,14 @@ extension AppManager {
 
         evmLabelManager.sync()
     }
+    
+    func disableBlurManager() {
+        blurManager.isEnabled = false
+    }
+    
+    func enableBlurManager() {
+        blurManager.isEnabled = true
+    }
 
     func willResignActive() {
         blurManager.willResignActive()
