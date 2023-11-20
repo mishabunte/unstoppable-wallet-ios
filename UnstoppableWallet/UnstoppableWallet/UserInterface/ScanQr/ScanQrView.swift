@@ -69,10 +69,14 @@ class ScanQrView: UIView {
     private func initialSetup() {
         scanQueue.async { () in
             do {
-                guard let videoCaptureDevice = AVCaptureDevice.default(for: AVMediaType.video) else {
+                guard let videoCaptureDevice = 
+                    AVCaptureDevice.default(.builtInUltraWideCamera, for: .video, position: .back)
+                    ?? AVCaptureDevice.default(for: .video)
+                else {
                     self.failed()
                     return
                 }
+                self.setFocusPoint(device: videoCaptureDevice)
                 let videoInput: AVCaptureDeviceInput
 
                 videoInput = try AVCaptureDeviceInput(device: videoCaptureDevice)
@@ -171,3 +175,34 @@ extension ScanQrView: AVCaptureMetadataOutputObjectsDelegate {
         }
     }
 }
+
+extension ScanQrView {
+    func setFocusPoint(device: AVCaptureDevice) {
+        print("------------------------------setFocusPoint")
+        let point = CGPoint(x: 0.5, y: 0.5)
+        DispatchQueue.main.async {
+            do {
+                try device.lockForConfiguration()
+                
+                if device.isFocusModeSupported(.continuousAutoFocus) && device.isFocusPointOfInterestSupported {
+                    device.focusPointOfInterest = point
+                    device.focusMode = .continuousAutoFocus
+                } else if device.isFocusModeSupported(.autoFocus) && device.isFocusPointOfInterestSupported {
+                    device.focusPointOfInterest = point
+                    device.focusMode = .autoFocus
+                }
+                
+                if (device.isLowLightBoostSupported) {
+                    device.automaticallyEnablesLowLightBoostWhenAvailable = false
+                }
+                
+                device.unlockForConfiguration()
+                print("=========================setFocusPoint")
+            } catch {
+                print("Error setting focus point: \(error)")
+            }
+        }
+    }
+}
+
+
