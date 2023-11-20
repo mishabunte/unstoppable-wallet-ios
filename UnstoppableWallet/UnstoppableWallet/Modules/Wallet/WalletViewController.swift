@@ -104,6 +104,13 @@ class WalletViewController: ThemeViewController {
             target: self,
             action: #selector(onTapRestore)
         )
+        
+        placeholderView.addPrimaryButton(
+            style: .yellow,
+            title: "onboarding.balance.hardware".localized,
+            target: self,
+            action: #selector(onTapHardware)
+        )
 
         placeholderView.addPrimaryButton(
             style: .transparent,
@@ -227,6 +234,11 @@ class WalletViewController: ThemeViewController {
         let viewController = RestoreTypeModule.viewController(type: .wallet, sourceViewController: self)
         present(viewController, animated: true)
     }
+    
+    @objc func onTapHardware() {
+        let viewController = HardwareModule.viewController()
+        present(viewController, animated: true)
+    }
 
     @objc func onTapWatch() {
         let viewController = WatchModule.viewController()
@@ -269,12 +281,12 @@ class WalletViewController: ThemeViewController {
         openManageWallets()
     }
 
-    private func sync(nftVisible _: Bool) {
-//        navigationItem.rightBarButtonItem = nftVisible ? UIBarButtonItem(image: UIImage(named: "nft_24"), style: .plain, target: self, action: #selector(onTapNft)) : nil
+    private func sync(nftVisible : Bool) {
+        navigationItem.rightBarButtonItem = nftVisible ? UIBarButtonItem(image: UIImage(named: "nft_24"), style: .plain, target: self, action: #selector(onTapNft)) : nil
     }
 
     private func sync(qrScanVisible: Bool) {
-        navigationItem.rightBarButtonItem = qrScanVisible ? UIBarButtonItem(image: UIImage(named: "qr_scan_24"), style: .plain, target: self, action: #selector(onTapQrScan)) : nil
+        //navigationItem.rightBarButtonItem = qrScanVisible ? UIBarButtonItem(image: UIImage(named: "qr_scan_24"), style: .plain, target: self, action: #selector(onTapQrScan)) : nil
     }
 
     private func sync(state: WalletViewModel.State) {

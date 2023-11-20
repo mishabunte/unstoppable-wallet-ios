@@ -94,7 +94,9 @@ class WalletViewModel {
         nftVisible = activeAccount?.type.supportsNft ?? false
 
         controlViewItem = activeAccount.map {
-            ControlViewItem(watchVisible: $0.watchAccount, coinManagerVisible: !$0.cexAccount)
+            ControlViewItem(watchVisible: $0.watchAccount,
+                            coinManagerVisible: $0.hardwareAccount || !$0.cexAccount,
+                            hardwareVisible: $0.hardwareAccount)
         }
 
         if let account = activeAccount {
@@ -327,5 +329,6 @@ extension WalletViewModel {
     struct ControlViewItem {
         let watchVisible: Bool
         let coinManagerVisible: Bool
+        let hardwareVisible: Bool
     }
 }

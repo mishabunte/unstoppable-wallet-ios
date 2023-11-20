@@ -11,6 +11,7 @@ class WalletHeaderView: UITableViewHeaderFooterView {
     private let stackView = UIStackView()
     private let settingsButton = SecondaryCircleButton()
     private let watchAccountImage = ImageComponent(size: .iconSize24)
+    private let hardwareAccountImage = ImageComponent(size: .iconSize24)
 
     var onTapSortBy: (() -> Void)?
     var onTapSettings: (() -> Void)?
@@ -40,6 +41,9 @@ class WalletHeaderView: UITableViewHeaderFooterView {
 
         stackView.addArrangedSubview(watchAccountImage)
         watchAccountImage.imageView.image = UIImage(named: "binocule_24")?.withTintColor(.themeGray)
+        
+        stackView.addArrangedSubview(hardwareAccountImage)
+        hardwareAccountImage.imageView.image = UIImage(named: "hardware_wallet")?.withTintColor(.themeGray)
 
         stackView.addArrangedSubview(settingsButton)
         settingsButton.set(image: UIImage(named: "manage_2_20"))
@@ -65,6 +69,7 @@ class WalletHeaderView: UITableViewHeaderFooterView {
 
     func set(controlViewItem: WalletViewModel.ControlViewItem) {
         watchAccountImage.isHidden = !controlViewItem.watchVisible
+        hardwareAccountImage.isHidden = !controlViewItem.hardwareVisible
         settingsButton.isHidden = !controlViewItem.coinManagerVisible
     }
 }
