@@ -92,8 +92,8 @@ class Eip1559GasPriceService {
 
         status = .completed(FallibleData(
             data: EvmFeeModule.GasPrices(
-                recommended: .eip1559(maxFeePerGas: recommendedMaxFee, maxPriorityFeePerGas: recommendedTips),
-                userDefined: .eip1559(maxFeePerGas: maxFee, maxPriorityFeePerGas: tips)
+                recommended: .eip1559(maxFeePerGas: recommendedMaxFee + recommendedTips, maxPriorityFeePerGas: recommendedTips),
+                userDefined: .eip1559(maxFeePerGas: maxFee + tips, maxPriorityFeePerGas: tips)
             ),
             errors: [], warnings: warnings
         ))
