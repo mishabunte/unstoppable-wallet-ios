@@ -8,6 +8,7 @@ import UniswapKit
 import OneInchKit
 import HdWalletKit
 import MarketKit
+import BigInt
 
 class EvmKitManager {
     let chain: Chain
@@ -55,6 +56,7 @@ class EvmKitManager {
 
         let address: EvmKit.Address
         var signer: Signer?
+        var hardwareSigner: HardwareSignerKitWrapper?
 
         switch account.type {
         case .mnemonic:
@@ -68,6 +70,9 @@ class EvmKitManager {
             signer = Signer.instance(privateKey: data, chain: chain)
         case let .evmAddress(value):
             address = value
+        case let .evmAddressHardware(value):
+            address = value
+            hardwareSigner = HardwareSignerKitWrapper(address: address)
         default:
             throw AdapterError.unsupportedAccount
         }
@@ -110,7 +115,7 @@ class EvmKitManager {
 
         evmKit.start()
 
-        let wrapper = EvmKitWrapper(blockchainType: blockchainType, evmKit: evmKit, nftKit: nftKit, signer: signer)
+        let wrapper = EvmKitWrapper(blockchainType: blockchainType, evmKit: evmKit, nftKit: nftKit, signer: signer, hardwareSigner: hardwareSigner)
 
         _evmKitWrapper = wrapper
         currentAccount = account
@@ -151,12 +156,14 @@ class EvmKitWrapper {
     let evmKit: EvmKit.Kit
     let nftKit: NftKit.Kit?
     let signer: Signer?
+    let hardwareSigner: HardwareSignerKitWrapper?
 
-    init(blockchainType: BlockchainType, evmKit: EvmKit.Kit, nftKit: NftKit.Kit?, signer: Signer?) {
+    init(blockchainType: BlockchainType, evmKit: EvmKit.Kit, nftKit: NftKit.Kit?, signer: Signer?, hardwareSigner: HardwareSignerKitWrapper?) {
         self.blockchainType = blockchainType
         self.evmKit = evmKit
         self.nftKit = nftKit
         self.signer = signer
+        self.hardwareSigner = hardwareSigner
     }
 
     func sendSingle(transactionData: TransactionData, gasPrice: GasPrice, gasLimit: Int, nonce: Int? = nil) -> Single<FullTransaction> {
@@ -165,18 +172,51 @@ class EvmKitWrapper {
         }
 
         return evmKit.rawTransaction(transactionData: transactionData, gasPrice: gasPrice, gasLimit: gasLimit, nonce: nonce)
-                .flatMap { [weak self] rawTransaction in
-                    guard let strongSelf = self else {
-                        return Single.error(AppError.weakReference)
-                    }
-
-                    do {
-                        let signature = try signer.signature(rawTransaction: rawTransaction)
-                        return strongSelf.evmKit.sendSingle(rawTransaction: rawTransaction, signature: signature)
-                    } catch {
-                        return Single.error(error)
-                    }
+            .flatMap { [weak self] rawTransaction in
+                guard let strongSelf = self else {
+                    return Single.error(AppError.weakReference)
                 }
+                
+                do {
+                    let signature = try signer.signature(rawTransaction: rawTransaction)
+                    return strongSelf.evmKit.sendSingle(rawTransaction: rawTransaction, signature: signature)
+                } catch {
+                    return Single.error(error)
+                }
+            }
+    }
+    
+    func sendSingle(rawTransaction: RawTransaction, signatureHex: String) -> Single<FullTransaction> {
+        
+        guard let signature = signatureHex.toSignature() else {
+            return Single.error(SignerError.wrongSignature)
+        }
+        
+        return self.evmKit.sendSingle(rawTransaction: rawTransaction, signature: signature)
+    }
+    
+    func getRawTransactionSingle(transactionData: TransactionData, gasPrice: GasPrice, gasLimit: Int, nonce: Int? = nil) -> Single<RawTransaction>
+    {
+        return evmKit.rawTransaction(transactionData: transactionData, gasPrice: gasPrice, gasLimit: gasLimit, nonce: nonce)
+        /*
+        return Single<RawTransaction>.create { [weak self] observer in
+            
+            guard let strongSelf = self else {
+                return Single<String>.error(AppError.weakReference) as! Disposable
+            }
+            
+            return strongSelf.evmKit.rawTransaction(transactionData: transactionData, gasPrice: gasPrice, gasLimit: gasLimit, nonce: nonce)
+                .subscribe(onSuccess: { rawTransaction in
+                    //HardwareWalletKit.shared.rawTransaction = rawTransaction
+                    //let emptySignature = Signature(v: 0, r: 0, s: 0)
+                    //let data = TransactionBuilder.encode(rawTransaction: rawTransaction, signature: emptySignature, chainId: chainId)
+                    //let transactionHex = "0x" + data.toHexString()
+                    observer(.success(rawTransaction))
+                }, onError: { error in
+                    observer(.error(error))
+                })
+        }
+         */
     }
 
 }
@@ -193,6 +233,27 @@ extension EvmKitWrapper {
 
     enum SignerError: Error {
         case signerNotSupported
+        case wrongSignature
     }
 
+}
+
+extension String {
+    func toSignature() -> Signature? {
+        // Minimum length check (64 for r, 64 for s, and at least 2 for v)
+        guard self.count >= 129 else { return nil }
+        
+        let cleaned = self.hasPrefix("0x") ? String(self.dropFirst(2)) : self
+        let rHex = String(cleaned.prefix(64))
+        let sHex = String(cleaned.dropFirst(64).prefix(64))
+        let vHex = String(cleaned.dropFirst(128))
+        
+        guard let v = Int(vHex, radix: 16),
+              let r = BigUInt(rHex, radix: 16),
+              let s = BigUInt(sHex, radix: 16) else {
+            return nil
+        }
+        
+        return Signature(v: v, r: r, s: s)
+    }
 }
