@@ -14,6 +14,7 @@ class EvmBlockchainManager {
         .fantom,
         .base,
         .zkSync,
+        .nexus,
     ]
 
     private let syncSourceManager: EvmSyncSourceManager
@@ -28,6 +29,7 @@ class EvmBlockchainManager {
     var allBlockchains: [Blockchain] {
         do {
             return try marketKit.blockchains(uids: EvmBlockchainManager.blockchainTypes.map(\.uid))
+//            return try marketKit.allBlockchains()
         } catch {
             return []
         }
@@ -39,6 +41,8 @@ class EvmBlockchainManager {
         self.marketKit = marketKit
         self.accountManagerFactory = accountManagerFactory
         self.spamAddressManager = spamAddressManager
+//        
+//        marketKit.sync()
     }
 
     private func evmManagers(blockchainType: BlockchainType) -> (EvmKitManager, EvmAccountManager) {
@@ -107,6 +111,7 @@ extension EvmBlockchainManager {
         case .fantom: return .fantom
         case .base: return .base
         case .zkSync: return .zkSync
+        case .nexus: return .nexus
         default: fatalError("Unsupported blockchain type")
         }
     }
