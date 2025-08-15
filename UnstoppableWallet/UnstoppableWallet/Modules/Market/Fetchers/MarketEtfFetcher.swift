@@ -27,7 +27,7 @@ extension MarketEtfFetcher: IMetricChartFetcher {
     var intervals: [HsPeriodType] { [] }
 
     func fetch(interval _: HsPeriodType) async throws -> MetricChartModule.ItemData {
-        let points = try await marketKit.etfPoints(currencyCode: currencyManager.baseCurrency.code)
+        let points = try await marketKit.etfPoints(category: "eth", currencyCode: currencyManager.baseCurrency.code)
 
         var items = [MetricChartModule.Item]()
         var totalInflow = [Decimal]()

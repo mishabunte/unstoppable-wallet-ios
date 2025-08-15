@@ -72,7 +72,7 @@ extension MarketEtfViewModel {
 
         Task { [weak self, marketKit, currency] in
             do {
-                let etfs = try await marketKit.etfs(currencyCode: currency.code)
+                let etfs = try await marketKit.etfs(category: "eth", currencyCode: currency.code)
                 let sortedEtfs = etfs.sorted { $0.totalAssets ?? 0 > $1.totalAssets ?? 0 }
                 let rankedEtfs = sortedEtfs.enumerated().map { RankedEtf(etf: $1, rank: $0 + 1) }
 

@@ -1,4 +1,5 @@
 import Combine
+import RxSwift
 import EvmKit
 import MarketKit
 import SwiftUI
@@ -6,6 +7,8 @@ import SwiftUI
 class EvmTransactionService: ITransactionService {
     private static let tipsSafeRangeBounds = RangeBounds(lower: .factor(0.9), upper: .factor(1.5))
     private static let legacyGasPriceSafeRangeBounds = RangeBounds(lower: .factor(0.9), upper: .factor(1.5))
+    
+    private let evmKit: EvmKit.Kit
 
     private let userAddress: EvmKit.Address
     private let blockchainType: BlockchainType
@@ -72,10 +75,11 @@ class EvmTransactionService: ITransactionService {
         )
     }
 
-    init?(blockchainType: BlockchainType, userAddress: EvmKit.Address, initialTransactionSettings: InitialTransactionSettings?) {
+    init?(blockchainType: BlockchainType, userAddress: EvmKit.Address, initialTransactionSettings: InitialTransactionSettings?, evmKit: EvmKit.Kit) {
         guard let rpcSource = App.shared.evmSyncSourceManager.httpSyncSource(blockchainType: blockchainType)?.rpcSource else {
             return nil
         }
+        self.evmKit = evmKit
 
         chain = App.shared.evmBlockchainManager.chain(blockchainType: blockchainType)
         self.blockchainType = blockchainType
@@ -134,6 +138,7 @@ class EvmTransactionService: ITransactionService {
     }
 
     func sync() async throws {
+        var errors = [Error]()
         if chain.isEIP1559Supported {
             recommendedGasPrice = try await EIP1559GasPriceProvider.gasPrice(networkManager: networkManager, rpcSource: rpcSource)
         } else {
@@ -143,12 +148,26 @@ class EvmTransactionService: ITransactionService {
         if usingRecommendedGasPrice {
             gasPrice = recommendedGasPrice
         }
+        let disposeBag = DisposeBag()
 
-        minimumNonce = try await EvmKit.Kit.nonceSingle(networkManager: networkManager, rpcSource: rpcSource, userAddress: userAddress, defaultBlockParameter: .latest)
-        nextNonce = try await EvmKit.Kit.nonceSingle(networkManager: networkManager, rpcSource: rpcSource, userAddress: userAddress, defaultBlockParameter: .pending)
+        Single.zip(evmKit.nonceSingle(defaultBlockParameter: .pending), evmKit.nonceSingle(defaultBlockParameter: .latest))
+            .subscribe(
+                onSuccess: { [weak self] noncePending, nonceLatest in
+                    self?.minimumNonce = nonceLatest
+                    self?.nextNonce = noncePending
+                },
+                onError: { [weak self] error in
+                    errors.append(error)
+                }
+            )
+            .disposed(by: disposeBag)
+        
+//        minimumNonce = try await EvmKit.Kit.nonceSingle(defaultBlockParameter: .latest)
+//        nextNonce = try await EvmKit.Kit.nonceSingle(defaultBlockParameter: .pending)
         if usingRecommendedNonce {
             nonce = nextNonce
         }
+        self.errors = errors
     }
 
     func settingsView(feeData: Binding<FeeData?>, loading: Binding<Bool>, feeToken: Token, currency: Currency, feeTokenRate: Binding<Decimal?>) -> AnyView? {
