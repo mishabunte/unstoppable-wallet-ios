@@ -25,6 +25,7 @@ extension BlockchainType {
         .tron,
         .ton,
         .stellar,
+        .nexus,
     ]
 
     static let swappable: [BlockchainType] = [
@@ -53,7 +54,10 @@ extension BlockchainType {
 
     var imageUrl: String {
         let scale = Int(UIScreen.main.scale)
-        return "https://cdn.blocksdecoded.com/blockchain-icons/32px/\(uid)@\(scale)x.png"
+        switch self{
+        case .nexus: return "https://pbs.twimg.com/profile_images/1887351274955546627/jlvN83vR_400x400.jpg"
+        default: return "https://cdn.blocksdecoded.com/blockchain-icons/32px/\(uid)@\(scale)x.png"
+        }
     }
 
     var restoreSettingTypes: [RestoreSettingType] {
@@ -84,6 +88,7 @@ extension BlockchainType {
             .dash,
             .ecash,
             .fantom,
+            .nexus,
         ]
 
         return blockchainTypes.firstIndex(of: self) ?? Int.max
@@ -181,6 +186,7 @@ extension BlockchainType {
         case .tron: return "TRX, TRC20 tokens"
         case .ton: return "TON"
         case .stellar: return "Stellar"
+        case .nexus: return "NEX"
         default: return ""
         }
     }
