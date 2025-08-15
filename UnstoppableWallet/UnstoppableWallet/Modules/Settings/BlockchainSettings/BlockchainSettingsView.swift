@@ -58,6 +58,7 @@ struct BlockchainSettingsView: View {
             KFImage.url(URL(string: blockchain.type.imageUrl))
                 .resizable()
                 .frame(width: .iconSize32, height: .iconSize32)
+                .clipShape(RoundedRectangle(cornerRadius: .iconSize32 / 4, style: .continuous))
 
             VStack(spacing: 1) {
                 Text(blockchain.name).themeBody()

@@ -35,12 +35,14 @@ class BlockchainSettingsViewModel: ObservableObject {
     }
 
     private func syncEvmItems() {
-        evmItems = evmBlockchainManager.allBlockchains
+        let blockchainslist = evmBlockchainManager.allBlockchains
+        evmItems = blockchainslist
             .map { blockchain in
                 let syncSource = evmSyncSourceManager.syncSource(blockchainType: blockchain.type)
                 return EvmItem(blockchain: blockchain, syncSource: syncSource)
             }
             .sorted { $0.blockchain.type.order < $1.blockchain.type.order }
+//        print("All Blockchains: \(blockchainslist)")
     }
 }
 
