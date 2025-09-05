@@ -36,9 +36,9 @@ class WalletViewItemFactory {
             ))
         } else {
             return .amount(viewItem: BalanceSecondaryAmountViewItem(
-                descriptionValue: rateValue(rateItem: item.priceItem),
-                secondaryValue: balanceHidden ? nil : secondaryValue(item: item, balancePrimaryValue: balancePrimaryValue),
-                diff: diff(rateItem: item.priceItem)
+                descriptionValue: item.name != "Nexus Token (NEX)" ? rateValue(rateItem: item.priceItem) : (text: "", dimmed: true),
+                secondaryValue: item.name != "Nexus Token (NEX)" ? (balanceHidden ? nil : secondaryValue(item: item, balancePrimaryValue: balancePrimaryValue)) : nil,
+                diff: item.name != "Nexus Token (NEX)" ? diff(rateItem: item.priceItem) : nil
             ))
         }
     }
@@ -80,6 +80,7 @@ class WalletViewItemFactory {
 
     private func rateValue(rateItem: WalletCoinPriceService.Item?) -> (text: String?, dimmed: Bool) {
         guard let rateItem else {
+            
             return (text: "n/a".localized, dimmed: true)
         }
 

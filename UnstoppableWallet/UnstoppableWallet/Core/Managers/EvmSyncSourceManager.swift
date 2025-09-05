@@ -30,7 +30,7 @@ class EvmSyncSourceManager {
         case .fantom: return .fantom(apiKeys: AppConfig.ftmscanKeys)
         case .base: return .basescan(apiKeys: AppConfig.basescanKeys)
         case .zkSync: return .eraZkSync(apiKeys: AppConfig.eraZkSyncKeys)
-        case .nexus: return .nexusExplorer(apiKeys: [])
+        case .nexus: return .nexusExplorer(apiKeys: [""])
         default: fatalError("Non-supported EVM blockchain")
         }
     }
@@ -224,11 +224,13 @@ extension EvmSyncSourceManager {
                 ),
             ]
         case .nexus:
+//            print("got nexus RPC")
             return [
                 EvmSyncSource(
                     name: "Nexus RPC",
-                    rpcSource: .http(urls: [URL(string: "https://testnet3.explorer.nexus.xyz/")!], auth: nil),
-                    transactionSource: defaultTransactionSource(blockchainType: blockchainType))
+                    rpcSource: .nexusRpcHttp(),
+                    transactionSource: defaultTransactionSource(blockchainType: blockchainType)
+                )
             ]
         default:
             return []
@@ -243,6 +245,8 @@ extension EvmSyncSourceManager {
             } else {
                 records = try evmSyncSourceStorage.getAll()
             }
+//            let allrecords = try evmSyncSourceStorage.getAll()
+//            print("All sync sources: \(allrecords)")
 
             return records.compactMap { record in
                 let blockchainType = BlockchainType(uid: record.blockchainTypeUid)

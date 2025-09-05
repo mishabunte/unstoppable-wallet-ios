@@ -143,7 +143,7 @@ extension BlockchainType {
         case .evmPrivateKey, .evmAddress:
             switch self {
             case .ethereum, .binanceSmartChain, .polygon, .avalanche, .optimism, .arbitrumOne,
-                 .gnosis, .fantom, .base, .zkSync:
+                    .gnosis, .fantom, .base, .zkSync, .nexus:
                 return true
             default: return false
             }

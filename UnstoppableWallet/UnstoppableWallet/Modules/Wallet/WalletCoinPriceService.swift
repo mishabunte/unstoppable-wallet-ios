@@ -50,9 +50,11 @@ class WalletCoinPriceService {
         coinPriceCancellables = Set()
 
         if !coinUids.isEmpty {
+            print("WalletCoinPriceService: Subscribing to coin prices for UIDs: \(Array(coinUids))")
             marketKit.coinPriceMapPublisher(coinUids: Array(coinUids), currencyCode: currencyManager.baseCurrency.code)
-                .sink { [weak self] in
-                    self?.onUpdate(coinPriceMap: $0)
+                .sink { [weak self] coinPriceMap in
+                    print("WalletCoinPriceService: Received price data for \(coinPriceMap.count) coins: \(coinPriceMap.keys.sorted())")
+                    self?.onUpdate(coinPriceMap: coinPriceMap)
                 }
                 .store(in: &coinPriceCancellables)
         }
@@ -114,7 +116,12 @@ extension WalletCoinPriceService {
     }
 
     func item(coinUid: String) -> Item? {
-        marketKit.coinPrice(coinUid: coinUid, currencyCode: currency.code).map { item(coinPrice: $0) }
+        let coinPrice = marketKit.coinPrice(coinUid: coinUid, currencyCode: currency.code)
+        print("WalletCoinPriceService: Requesting price for coinUid '\(coinUid)' - Found: \(coinPrice != nil)")
+        if coinPrice == nil {
+            print("WalletCoinPriceService: No price data available for coinUid '\(coinUid)'")
+        }
+        return coinPrice.map { item(coinPrice: $0) }
     }
 
     func refresh() {

@@ -81,6 +81,7 @@ enum AccountType: Identifiable {
             case (.dash, .native): return true
             case (.zcash, .native): return true
             case (.ethereum, .native), (.ethereum, .eip20): return true
+            case (.nexus, .native), (.nexus, .eip20): return true
             case (.binanceSmartChain, .native), (.binanceSmartChain, .eip20): return true
             case (.polygon, .native), (.polygon, .eip20): return true
             case (.avalanche, .native), (.avalanche, .eip20): return true
@@ -115,6 +116,7 @@ enum AccountType: Identifiable {
         case .evmPrivateKey, .evmAddress:
             switch (token.blockchainType, token.type) {
             case (.ethereum, .native), (.ethereum, .eip20): return true
+            case (.nexus, .native), (.nexus, .eip20): return true
             case (.binanceSmartChain, .native), (.binanceSmartChain, .eip20): return true
             case (.polygon, .native), (.polygon, .eip20): return true
             case (.avalanche, .native), (.avalanche, .eip20): return true
