@@ -14,6 +14,12 @@ public class ImageComponent: UIView {
             maker.centerY.equalToSuperview()
             maker.size.equalTo(size)
         }
+        
+        // Add rounded corners for 32px images (typical icon size)
+        if size == 32 {
+            imageView.layer.cornerRadius = 8
+            imageView.clipsToBounds = true
+        }
     }
 
     @available(*, unavailable)
