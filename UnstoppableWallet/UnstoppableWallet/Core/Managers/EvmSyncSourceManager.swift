@@ -31,6 +31,7 @@ class EvmSyncSourceManager {
         case .base: return .basescan(apiKeys: AppConfig.basescanKeys)
         case .zkSync: return .eraZkSync(apiKeys: AppConfig.eraZkSyncKeys)
         case .nexus: return .nexusExplorer(apiKeys: [""])
+        case .worldchain: return .worldchainExplorer(apiKeys: AppConfig.etherscanKeys)
         default: fatalError("Non-supported EVM blockchain")
         }
     }
@@ -229,6 +230,14 @@ extension EvmSyncSourceManager {
                 EvmSyncSource(
                     name: "Nexus RPC",
                     rpcSource: .nexusRpcHttp(),
+                    transactionSource: defaultTransactionSource(blockchainType: blockchainType)
+                )
+            ]
+        case .worldchain:
+            return [
+                EvmSyncSource(
+                    name: "WorldChain RPC",
+                    rpcSource: .worldchainRpcHttps(),
                     transactionSource: defaultTransactionSource(blockchainType: blockchainType)
                 )
             ]

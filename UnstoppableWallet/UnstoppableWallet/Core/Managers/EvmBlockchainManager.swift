@@ -15,6 +15,7 @@ class EvmBlockchainManager {
         .base,
         .zkSync,
         .nexus,
+        .worldchain,
     ]
 
     private let syncSourceManager: EvmSyncSourceManager
@@ -112,6 +113,7 @@ extension EvmBlockchainManager {
         case .base: return .base
         case .zkSync: return .zkSync
         case .nexus: return .nexus
+        case .worldchain: return .worldchain
         default: fatalError("Unsupported blockchain type")
         }
     }
