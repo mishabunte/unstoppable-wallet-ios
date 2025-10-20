@@ -13,11 +13,54 @@ import WalletConnectSign
 import WalletConnectUtils
 import Web3Wallet
 
-extension Starscream.WebSocket: WebSocketConnecting {}
+// Wrapper to make Starscream.WebSocket conform to WebSocketConnecting
+class WebSocketWrapper: WebSocketConnecting {
+    var onConnect: (() -> Void)?
+    
+    var onDisconnect: (((any Error)?) -> Void)?
+    
+    var onText: ((String) -> Void)?
+    
+    private let webSocket: Starscream.WebSocket
+
+    var request: URLRequest {
+        get { URLRequest(url: webSocket.request.url!) }
+        set { webSocket.request = newValue }
+    }
+
+    var delegate: Starscream.WebSocketDelegate? {
+        get { webSocket.delegate }
+        set { webSocket.delegate = newValue }
+    }
+
+    var isConnected: Bool = false
+
+    init(request: URLRequest) {
+        self.webSocket = Starscream.WebSocket(request: request)
+    }
+
+    func connect() {
+        webSocket.connect()
+    }
+
+    func disconnect() {
+        webSocket.disconnect()
+    }
+
+    func write(string: String, completion: (() -> Void)?) {
+        webSocket.write(string: string, completion: completion)
+    }
+
+    func write(data: Data, completion: (() -> Void)?) {
+        webSocket.write(data: data, completion: completion)
+    }
+}
 
 struct SocketFactory: WebSocketFactory {
     func create(with url: URL) -> WebSocketConnecting {
-        Starscream.WebSocket(url: url)
+        var request = URLRequest(url: url)
+        request.timeoutInterval = 5
+        return WebSocketWrapper(request: request)
     }
 }
 

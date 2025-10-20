@@ -27,6 +27,8 @@ class ChooseWatchService {
         let tokenQueries: [TokenQuery]
 
         switch accountType {
+        case .solanaAddress:
+            tokenQueries = BlockchainType.solana.nativeTokenQueries
         case .mnemonic, .evmPrivateKey, .stellarSecretKey:
             return nil
 
