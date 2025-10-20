@@ -63,6 +63,11 @@ class AccountStorage {
             }
 
             type = .tronAddress(address: try! TronKit.Address(raw: data))
+        case .solanaAddress:
+            guard let address = record.dataKey else {
+                return nil
+            }
+            type = .solanaAddress(address: address)
         case .tonAddress:
             guard let address = record.dataKey else {
                 return nil
@@ -140,6 +145,9 @@ class AccountStorage {
             dataKey = try store(data: address.raw, id: id, typeName: typeName, keyName: .data)
         case let .tonAddress(address):
             typeName = .tonAddress
+            dataKey = address
+        case let .solanaAddress(address: address):
+            typeName = .solanaAddress
             dataKey = address
         case let .stellarAccount(accountId):
             typeName = .stellarAccount
@@ -275,6 +283,7 @@ extension AccountStorage {
         case stellarAccount
         case hdExtendedKey
         case btcAddress
+        case solanaAddress
     }
 
     private enum KeyName: String {

@@ -47,6 +47,8 @@ class TransactionAdapterManager {
                 transactionsAdapter = adapterFactory.tonTransactionAdapter(transactionSource: source)
             } else if source.blockchainType == .stellar {
                 transactionsAdapter = adapterFactory.stellarTransactionAdapter(transactionSource: source)
+            } else if source.blockchainType == .solana {
+                transactionsAdapter = adapter as? ITransactionsAdapter
             } else {
                 transactionsAdapter = adapter as? ITransactionsAdapter
             }

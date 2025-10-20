@@ -144,6 +144,8 @@
 	<string>${ShowTestNetSwitcher}</string>
 	<key>SnowtraceApiKeys</key>
 	<string>${snowtrace_api_keys}</string>
+	<key>SolscanApiKeys</key>
+	<string>${solscan_api_keys}</string>
 	<key>SwapEnabled</key>
 	<string>${swap_enabled}</string>
 	<key>ThorchainAffiliate</key>

@@ -79,6 +79,10 @@ enum AppConfig {
     static var etherscanKeys: [String] {
         ((Bundle.main.object(forInfoDictionaryKey: "EtherscanApiKeys") as? String) ?? "").components(separatedBy: ",")
     }
+    
+    static var solscanApiKeys: [String] {
+        ((Bundle.main.object(forInfoDictionaryKey: "SolscanApiKeys") as? String) ?? "").components(separatedBy: ",")
+    }
 
     static var arbiscanKeys: [String] {
         ((Bundle.main.object(forInfoDictionaryKey: "ArbiscanApiKeys") as? String) ?? "").components(separatedBy: ",")
