@@ -26,6 +26,8 @@ extension BlockchainType {
         .ton,
         .stellar,
         .nexus,
+        .worldchain,
+        .solana
     ]
 
     static let swappable: [BlockchainType] = [
@@ -56,6 +58,7 @@ extension BlockchainType {
         let scale = Int(UIScreen.main.scale)
         switch self{
         case .nexus: return "https://pbs.twimg.com/profile_images/1887351274955546627/jlvN83vR_400x400.jpg"
+        case .worldchain: return "https://cdn.blocksdecoded.com/blockchain-icons/32px/world-chain@3x.png"
         default: return "https://cdn.blocksdecoded.com/blockchain-icons/32px/\(uid)@\(scale)x.png"
         }
     }
@@ -75,6 +78,7 @@ extension BlockchainType {
             .tron,
             .ton,
             .stellar,
+            .solana,
             .polygon,
             .arbitrumOne,
             .optimism,
@@ -89,6 +93,7 @@ extension BlockchainType {
             .ecash,
             .fantom,
             .nexus,
+            .worldchain,
         ]
 
         return blockchainTypes.firstIndex(of: self) ?? Int.max
@@ -143,7 +148,7 @@ extension BlockchainType {
         case .evmPrivateKey, .evmAddress:
             switch self {
             case .ethereum, .binanceSmartChain, .polygon, .avalanche, .optimism, .arbitrumOne,
-                    .gnosis, .fantom, .base, .zkSync, .nexus:
+                    .gnosis, .fantom, .base, .zkSync, .nexus, .worldchain:
                 return true
             default: return false
             }
@@ -187,6 +192,8 @@ extension BlockchainType {
         case .ton: return "TON"
         case .stellar: return "Stellar"
         case .nexus: return "NEX"
+        case .worldchain: return "L2 chain"
+        case .solana: return "SOL"
         default: return ""
         }
     }

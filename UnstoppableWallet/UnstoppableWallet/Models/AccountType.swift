@@ -5,6 +5,7 @@ import Foundation
 import HdWalletKit
 import MarketKit
 import TronKit
+import Base58Swift
 
 enum AccountType: Identifiable {
     case mnemonic(words: [String], salt: String, bip39Compliant: Bool)
@@ -16,6 +17,7 @@ enum AccountType: Identifiable {
     case stellarAccount(accountId: String)
     case hdExtendedKey(key: HDExtendedKey)
     case btcAddress(address: String, blockchainType: BlockchainType, tokenType: TokenType)
+    case solanaAddress(address: String)
 
     var id: Self {
         self
@@ -61,6 +63,8 @@ enum AccountType: Identifiable {
             privateData = key.serialized
         case let .btcAddress(address, blockchainType, tokenType):
             privateData = "\(address)&\(blockchainType.uid)|\(tokenType.id)".data(using: .utf8) ?? Data()
+        case let .solanaAddress(address):
+            privateData = Data(Base58.base58Decode(address) ?? [UInt8]())
         }
 
         if hashed {
@@ -82,6 +86,8 @@ enum AccountType: Identifiable {
             case (.zcash, .native): return true
             case (.ethereum, .native), (.ethereum, .eip20): return true
             case (.nexus, .native), (.nexus, .eip20): return true
+            case (.worldchain, .native), (.worldchain, .eip20): return true
+            case (.solana, .native), (.solana, .spl): return true
             case (.binanceSmartChain, .native), (.binanceSmartChain, .eip20): return true
             case (.polygon, .native), (.polygon, .eip20): return true
             case (.avalanche, .native), (.avalanche, .eip20): return true
@@ -117,6 +123,7 @@ enum AccountType: Identifiable {
             switch (token.blockchainType, token.type) {
             case (.ethereum, .native), (.ethereum, .eip20): return true
             case (.nexus, .native), (.nexus, .eip20): return true
+            case (.worldchain, .native), (.worldchain, .eip20): return true
             case (.binanceSmartChain, .native), (.binanceSmartChain, .eip20): return true
             case (.polygon, .native), (.polygon, .eip20): return true
             case (.avalanche, .native), (.avalanche, .eip20): return true
@@ -145,6 +152,11 @@ enum AccountType: Identifiable {
             }
         case let .btcAddress(_, blockchainType, tokenType):
             return token.blockchainType == blockchainType && token.type == tokenType
+        case let .solanaAddress:
+            switch (token.blockchainType, token.type) {
+            case (.solana, .native), (.solana, .spl): return true
+            default: return false
+            }
         default:
             return false
         }
@@ -204,6 +216,8 @@ enum AccountType: Identifiable {
             }
         case .btcAddress:
             return "BTC Address"
+        case .solanaAddress:
+            return "SOL Address"
         }
     }
 
@@ -240,6 +254,8 @@ enum AccountType: Identifiable {
             }
         case .btcAddress:
             return "btc_address"
+        case .solanaAddress:
+            return "solana_address"
         }
     }
 
@@ -320,6 +336,8 @@ extension AccountType {
             return AccountType.evmPrivateKey(data: uniqueId)
         case .stellarSecretKey:
             return AccountType.stellarSecretKey(secretSeed: string)
+        case .solanaAddress:
+            return AccountType.solanaAddress(address: string)
         case .hdExtendedKey:
             do {
                 return try AccountType.hdExtendedKey(key: HDExtendedKey(data: uniqueId))
@@ -364,6 +382,7 @@ extension AccountType {
         case stellarAccount = "stellar_account"
         case hdExtendedKey = "hd_extended_key"
         case btcAddress = "btc_address_key"
+        case solanaAddress = "solana_address"
 
         init(_ type: AccountType) {
             switch type {
@@ -376,6 +395,7 @@ extension AccountType {
             case .stellarAccount: self = .stellarAccount
             case .hdExtendedKey: self = .hdExtendedKey
             case .btcAddress: self = .btcAddress
+            case .solanaAddress: self = .solanaAddress
             }
         }
     }
@@ -439,6 +459,9 @@ extension AccountType: Hashable {
             hasher.combine(address)
             hasher.combine(blockchainType)
             hasher.combine(tokenType)
+        case let .solanaAddress(address: address):
+            hasher.combine("solanaAddress")
+            hasher.combine(address)
         }
     }
 }

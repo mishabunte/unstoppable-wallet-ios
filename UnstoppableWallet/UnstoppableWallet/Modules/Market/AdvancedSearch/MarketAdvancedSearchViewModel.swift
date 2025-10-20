@@ -24,6 +24,7 @@ class MarketAdvancedSearchViewModel: ObservableObject {
         .unsupported(uid: "tomochain"),
         .unsupported(uid: "xdai"),
         .nexus,
+        .worldchain,
     ]
     private let allTimeDeltaPercent: Decimal = 10
 

@@ -17,6 +17,7 @@ enum AddressParserFactory {
         .zcash,
         .ethereum,
         .tron,
+        .solana,
     ]
 
     static func parser(blockchainType: BlockchainType?, tokenType: TokenType?) -> AddressUriParser {
@@ -73,7 +74,7 @@ enum AddressParserFactory {
             }
 
             return handlers
-        case .ethereum, .gnosis, .fantom, .polygon, .arbitrumOne, .avalanche, .optimism, .binanceSmartChain, .base, .zkSync, .nexus:
+        case .ethereum, .gnosis, .fantom, .polygon, .arbitrumOne, .avalanche, .optimism, .binanceSmartChain, .base, .zkSync, .nexus, .worldchain:
             let evmAddressParserItem = EvmAddressParser(blockchainType: blockchainType)
 
             var handlers = [IAddressParserItem]()

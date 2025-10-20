@@ -9,6 +9,7 @@ class AdapterFactory {
     private let evmBlockchainManager: EvmBlockchainManager
     private let evmSyncSourceManager: EvmSyncSourceManager
     private let btcBlockchainManager: BtcBlockchainManager
+    private let solanaKitManager: SolanaKitManager
     private let tronKitManager: TronKitManager
     private let tonKitManager: TonKitManager
     private let stellarKitManager: StellarKitManager
@@ -17,12 +18,13 @@ class AdapterFactory {
     private let evmLabelManager: EvmLabelManager
     private let spamAddressManager: SpamAddressManager
     init(evmBlockchainManager: EvmBlockchainManager, evmSyncSourceManager: EvmSyncSourceManager,
-         btcBlockchainManager: BtcBlockchainManager, tronKitManager: TronKitManager, tonKitManager: TonKitManager, stellarKitManager: StellarKitManager,
+         btcBlockchainManager: BtcBlockchainManager, solanaKitManager: SolanaKitManager, tronKitManager: TronKitManager, tonKitManager: TonKitManager, stellarKitManager: StellarKitManager,
          restoreSettingsManager: RestoreSettingsManager, coinManager: CoinManager, evmLabelManager: EvmLabelManager, spamAddressManager: SpamAddressManager)
     {
         self.evmBlockchainManager = evmBlockchainManager
         self.evmSyncSourceManager = evmSyncSourceManager
         self.btcBlockchainManager = btcBlockchainManager
+        self.solanaKitManager = solanaKitManager
         self.tronKitManager = tronKitManager
         self.tonKitManager = tonKitManager
         self.stellarKitManager = stellarKitManager
@@ -55,6 +57,24 @@ class AdapterFactory {
         }
 
         return try? Eip20Adapter(evmKitWrapper: evmKitWrapper, contractAddress: address, wallet: wallet, baseToken: baseToken, coinManager: coinManager, evmLabelManager: evmLabelManager, spamAddressManager: spamAddressManager)
+    }
+    
+    private func splAdapter(address: String, wallet: Wallet) -> IAdapter? {
+        do {
+            let solanaKit = try solanaKitManager.solanaKit(account: wallet.account)
+            return SplTokenAdapter(solanaKit: solanaKit, tokenAddress: address)
+        } catch {
+            return nil
+        }
+    }
+    
+    private func solanaAdapter(wallet: Wallet) -> IAdapter? {
+        do {
+            let solanaKit = try solanaKitManager.solanaKit(account: wallet.account)
+            return SolanaAdapter(solanaKit: solanaKit, wallet: wallet)
+        } catch {
+            return nil
+        }
     }
 
     private func tronAdapter(wallet: Wallet) -> IAdapter? {
@@ -107,6 +127,10 @@ extension AdapterFactory {
 
         return nil
     }
+    
+    func solanaTransactionAdapter(transactionSource: TransactionSource) -> ITransactionsAdapter? {
+        return nil
+    }
 
     func stellarTransactionAdapter(transactionSource: TransactionSource) -> ITransactionsAdapter? {
         let query = TokenQuery(blockchainType: .stellar, tokenType: .native)
@@ -144,10 +168,10 @@ extension AdapterFactory {
             let restoreSettings = restoreSettingsManager.settings(accountId: wallet.account.id, blockchainType: .zcash)
             return try? ZcashAdapter(wallet: wallet, restoreSettings: restoreSettings)
 
-        case (.native, .ethereum), (.native, .binanceSmartChain), (.native, .polygon), (.native, .avalanche), (.native, .optimism), (.native, .arbitrumOne), (.native, .gnosis), (.native, .fantom), (.native, .base), (.native, .zkSync), (.native, .nexus):
+        case (.native, .ethereum), (.native, .binanceSmartChain), (.native, .polygon), (.native, .avalanche), (.native, .optimism), (.native, .arbitrumOne), (.native, .gnosis), (.native, .fantom), (.native, .base), (.native, .zkSync), (.native, .nexus), (.native, .worldchain):
             return evmAdapter(wallet: wallet)
 
-        case let (.eip20(address), .ethereum), let (.eip20(address), .binanceSmartChain), let (.eip20(address), .polygon), let (.eip20(address), .avalanche), let (.eip20(address), .optimism), let (.eip20(address), .arbitrumOne), let (.eip20(address), .gnosis), let (.eip20(address), .fantom), let (.eip20(address), .base), let (.eip20(address), .zkSync), let (.eip20(address), .nexus):
+        case let (.eip20(address), .ethereum), let (.eip20(address), .binanceSmartChain), let (.eip20(address), .polygon), let (.eip20(address), .avalanche), let (.eip20(address), .optimism), let (.eip20(address), .arbitrumOne), let (.eip20(address), .gnosis), let (.eip20(address), .fantom), let (.eip20(address), .base), let (.eip20(address), .zkSync), let (.eip20(address), .nexus), let (.eip20(address), .worldchain):
             return eip20Adapter(address: address, wallet: wallet, coinManager: coinManager)
 
         case (.native, .tron):
@@ -155,6 +179,12 @@ extension AdapterFactory {
 
         case let (.eip20(address), .tron):
             return trc20Adapter(address: address, wallet: wallet)
+            
+        case (.native, .solana):
+            return solanaAdapter(wallet: wallet)
+            
+        case let (.spl(address), .solana):
+            return splAdapter(address: address, wallet: wallet)
 
         case (.native, .ton):
             if let tonKit = try? tonKitManager.tonKit(account: wallet.account) {
