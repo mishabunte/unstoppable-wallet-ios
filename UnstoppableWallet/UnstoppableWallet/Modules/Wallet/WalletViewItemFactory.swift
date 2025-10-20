@@ -152,6 +152,11 @@ class WalletViewItemFactory {
                 .receive: .enabled,
             ]
         case .evmAddress, .tronAddress, .tonAddress, .stellarAccount, .btcAddress: return [:]
+        case .solanaAddress(address: let address):
+            return [
+                .send: .disabled,
+                .receive: .enabled
+            ]
         }
     }
 }
