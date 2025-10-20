@@ -72,6 +72,7 @@ class App {
     let tronAccountManager: TronAccountManager
     let tonKitManager: TonKitManager
     let stellarKitManager: StellarKitManager
+    let solanaKitManager: SolanaKitManager
 
     let restoreSettingsManager: RestoreSettingsManager
     let predefinedBlockchainService: PredefinedBlockchainService
@@ -216,6 +217,7 @@ class App {
 
         tonKitManager = TonKitManager(restoreStateManager: restoreStateManager, marketKit: marketKit, walletManager: walletManager)
         stellarKitManager = StellarKitManager(restoreStateManager: restoreStateManager, marketKit: marketKit, walletManager: walletManager)
+        solanaKitManager = SolanaKitManager(restoreStateManager: restoreStateManager, marketKit: marketKit, walletManager: walletManager)
 
         let restoreSettingsStorage = RestoreSettingsStorage(dbPool: dbPool)
         restoreSettingsManager = RestoreSettingsManager(storage: restoreSettingsStorage)
@@ -264,6 +266,7 @@ class App {
             evmBlockchainManager: evmBlockchainManager,
             evmSyncSourceManager: evmSyncSourceManager,
             btcBlockchainManager: btcBlockchainManager,
+            solanaKitManager: solanaKitManager,
             tronKitManager: tronKitManager,
             tonKitManager: tonKitManager,
             stellarKitManager: stellarKitManager,
