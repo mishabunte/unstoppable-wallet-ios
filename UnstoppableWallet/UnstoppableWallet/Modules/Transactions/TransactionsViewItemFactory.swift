@@ -460,6 +460,80 @@ class TransactionsViewItemFactory {
                 title = "transactions.ton_transaction.title".localized
                 subTitle = "transactions.multiple".localized
             }
+            
+        case let record as SolanaTransactionRecord:
+            let amount = AppValue(token: record.token, value: record.amount)
+            let flow : BaseTransactionsViewModel.ValueType = record.flow == "in" ? .incoming : .outgoing
+            switch record.activityType {
+            case .receive:
+                iconType = singleValueIconType(source: record.source, kind: amount.kind)
+                title = "transactions.receive".localized
+                subTitle = "transactions.from".localized(mapped(address: record.from_address, blockchainType: item.record.source.blockchainType))
+                primaryValue = BaseTransactionsViewModel.Value(text: coinString(from: amount), type: type(value: amount, flow))
+                
+                if let currencyValue = item.currencyValue {
+                    secondaryValue = BaseTransactionsViewModel.Value(text: currencyString(from: currencyValue), type: .secondary)
+                }
+            case .send:
+                
+                iconType = singleValueIconType(source: record.source, kind: amount.kind)
+                title = "transactions.send".localized
+                subTitle = "transactions.to".localized(mapped(address: record.to_address, blockchainType: item.record.source.blockchainType))
+                primaryValue = BaseTransactionsViewModel.Value(text: coinString(from: amount), type: type(value: amount, flow))
+
+                if let currencyValue = item.currencyValue {
+                    secondaryValue = BaseTransactionsViewModel.Value(text: currencyString(from: currencyValue), type: .secondary)
+                }
+            case .mint:
+                iconType = singleValueIconType(source: record.source, kind: amount.kind)
+                title = "transactions.mint".localized
+                subTitle = amount.name
+                primaryValue = BaseTransactionsViewModel.Value(text: coinString(from: amount), type: type(value: amount, flow))
+
+                if let currencyValue = item.currencyValue {
+                    secondaryValue = BaseTransactionsViewModel.Value(text: currencyString(from: currencyValue), type: .secondary)
+                }
+            case .burn:
+                iconType = singleValueIconType(source: record.source, kind: amount.kind)
+                title = "transactions.burn".localized
+                subTitle = amount.name
+                primaryValue = BaseTransactionsViewModel.Value(text: coinString(from: amount), type: type(value: amount, flow))
+
+                if let currencyValue = item.currencyValue {
+                    secondaryValue = BaseTransactionsViewModel.Value(text: currencyString(from: currencyValue), type: .secondary)
+                }
+            case .createAccount:
+                iconType = singleValueIconType(source: record.source, kind: amount.kind)
+                title = "transactions.account_created".localized
+                subTitle = "transactions.funder".localized(mapped(address: record.from_address, blockchainType: item.record.source.blockchainType))
+                primaryValue = BaseTransactionsViewModel.Value(text: coinString(from: amount), type: type(value: amount, flow))
+                
+                if let currencyValue = item.currencyValue {
+                    secondaryValue = BaseTransactionsViewModel.Value(text: currencyString(from: currencyValue), type: .secondary)
+                }
+            case .closeAccount:
+                iconType = singleValueIconType(source: record.source, kind: amount.kind)
+                title = "Account Closed"
+                subTitle = "transactions.account".localized(mapped(address: record.from_address, blockchainType: item.record.source.blockchainType))
+                primaryValue = BaseTransactionsViewModel.Value(text: coinString(from: amount), type: type(value: amount, flow))
+                
+                if let currencyValue = item.currencyValue {
+                    secondaryValue = BaseTransactionsViewModel.Value(text: currencyString(from: currencyValue), type: .secondary)
+                }
+            case .fundAccount:
+                iconType = singleValueIconType(source: record.source, kind: amount.kind)
+                title = "transactions.account_created".localized
+                subTitle = "transactions.account".localized(mapped(address: record.to_address, blockchainType: item.record.source.blockchainType))
+                primaryValue = BaseTransactionsViewModel.Value(text: coinString(from: amount), type: type(value: amount, flow))
+
+                if let currencyValue = item.currencyValue {
+                    secondaryValue = BaseTransactionsViewModel.Value(text: currencyString(from: currencyValue), type: .secondary)
+                }
+            default:
+                iconType = .localIcon(imageName: item.record.source.blockchainType.iconPlain32)
+                title = "transactions.unknown_transaction.title".localized
+                subTitle = "transactions.unknown_transaction.description".localized()
+            }
 
         case let record as StellarTransactionRecord:
             switch record.type {

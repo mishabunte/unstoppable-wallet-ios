@@ -601,6 +601,29 @@ class TransactionInfoViewItemFactory {
             }
 
             feeViewItem = record.fee.map { .fee(title: "tx_info.fee".localized, value: feeString(appValue: $0, rate: _rate($0.coin))) }
+            
+        case let record as SolanaTransactionRecord:
+            var viewItems: [TransactionInfoModule.ViewItem]
+            let amount = AppValue(token: record.token, value: record.amount)
+            switch record.activityType {
+            case .receive:
+                viewItems = receiveSection(source: record.source, appValue: amount, from: record.from_address, rates: item.rates, balanceHidden: balanceHidden)
+            case .send:
+                viewItems = sendSection(source: record.source, appValue: amount, to: record.to_address, rates: item.rates, sentToSelf: false, balanceHidden: balanceHidden)
+            case .mint:
+                viewItems = receiveSection(source: record.source, appValue: amount, from: zeroAddress, rates: item.rates, balanceHidden: balanceHidden)
+            case .burn:
+                viewItems = sendSection(source: record.source, appValue: amount, to: zeroAddress, rates: item.rates, balanceHidden: balanceHidden)
+            case .createAccount:
+                viewItems = receiveSection(source: record.source, appValue: amount, from: record.from_address, rates: item.rates, balanceHidden: balanceHidden)
+            case .closeAccount:
+                viewItems = receiveSection(source: record.source, appValue: amount, from: record.from_address, rates: item.rates, balanceHidden: balanceHidden)
+            case .fundAccount:
+                viewItems = sendSection(source: record.source, appValue: amount, to: record.to_address, rates: item.rates, balanceHidden: balanceHidden)
+            default: viewItems = []
+            }
+            
+            sections.append(.init(viewItems))
 
         case let record as StellarTransactionRecord:
             var viewItems: [TransactionInfoModule.ViewItem]
