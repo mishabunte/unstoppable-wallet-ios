@@ -118,7 +118,7 @@ class SolanaKitManager {
     }
     
     private func getSplTokens(solanaKit: SolanaKit.Kit) -> [SplTokenInfo] {
-        guard let tokens = solanaKit.splTokens else { return [] }
+        let tokens = solanaKit.splTokens
         let splTokens: [SplTokenInfo] = tokens.compactMap { token -> SplTokenInfo? in
             guard let tokenData = token.account.tokenData else { return nil }
             return SplTokenInfo(
