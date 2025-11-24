@@ -22,7 +22,7 @@ class SplTokenAdapter {
         self.tokenAddress = tokenAddress
         
         // Find the token info from splTokens array
-        tokenInfo = solanaKit.splTokens?.first {
+        tokenInfo = solanaKit.splTokens.first {
             $0.account.tokenData?.mint == tokenAddress
         }
         

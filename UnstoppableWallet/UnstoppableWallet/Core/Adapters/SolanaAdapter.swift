@@ -223,15 +223,54 @@ extension SolanaAdapter: ITransactionsAdapter {
     
     func transactionsObservable(token: MarketKit.Token?, filter: TransactionTypeFilter, address: String?) -> RxSwift.Observable<[TransactionRecord]> {
         transactionRecordsSubject.asObservable()
-            .map { $0.filter { _ in return true } }
+            .map { transactions in
+                transactions.compactMap { transaction -> TransactionRecord? in
+                    switch filter {
+                    case .all: return transaction
+                    case .incoming: return transaction.flow == "in" ? transaction : nil
+                    case .outgoing: return transaction.flow == "out" ? transaction : nil
+                    default: return nil
+                    }
+                }
+            }
+            .filter { !$0.isEmpty }
     }
     
     func transactionsSingle(from: TransactionRecord?, token: MarketKit.Token?, filter: TransactionTypeFilter, address: String?, limit: Int) -> RxSwift.Single<[TransactionRecord]> {
-        Single.just([])
+//        Single.just([])
+        
+        let tokenType : TokenType
+        if token?.type == nil {
+            tokenType = .native
+        } else {
+            tokenType = token!.type
+        }
+        
+        let transactions = self.solanaKit.transactions.filter({ transaction in
+            switch tokenType {
+            case .native:
+                return transaction.token_address == "So11111111111111111111111111111111111111111"
+            case .spl(address: let address):
+                return transaction.token_address == address
+            default:
+                return false
+            }
+        }).filter({ transaction in
+            switch filter {
+            case .all: return true
+            case .outgoing: return transaction.flow == "in"
+            case .incoming: return transaction.flow == "out"
+            default: return false
+            }
+        }).map { transaction in
+            SolanaTransactionRecord(source: self.transactionSource, transfer: transaction, token: token!)
+        }
+        
+        return Single.just(transactions)
     }
     
     func rawTransaction(hash: String) -> String? {
-        nil
+        return hash
     }
     
     private func handleTransactionUpdates(_ transactions: [AccountTransfer]) {
