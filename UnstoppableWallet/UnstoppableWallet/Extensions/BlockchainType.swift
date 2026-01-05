@@ -152,7 +152,7 @@ extension BlockchainType {
                 return true
             default: return false
             }
-        case .stellarSecretKey, .stellarAccount:
+        case .stellarSecretKey, .stellarAccount, .stellarHardwareAccount:
             return self == .stellar
         case .tronAddress:
             return self == .tron

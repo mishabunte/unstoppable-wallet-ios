@@ -1,6 +1,14 @@
+//
+//  ChooseHardwareWalletService.swift
+//  UnstoppableWallet
+//
+//  Created by arsenal on 29.12.25.
+//  Copyright © 2025 Horizontal Systems. All rights reserved.
+//
+
 import MarketKit
 
-class ChooseWatchService {
+class ChooseHardwareWalletService {
     private let accountType: AccountType
     private let accountName: String
     private let accountFactory: AccountFactory
@@ -20,10 +28,10 @@ class ChooseWatchService {
         self.marketKit = marketKit
         self.evmBlockchainManager = evmBlockchainManager
 
-        items = watchItems() ?? .coins(tokens: [])
+        items = walletItems() ?? .coins(tokens: [])
     }
 
-    private func watchItems() -> WatchModule.Items? {
+    private func walletItems() -> WatchModule.Items? {
         let tokenQueries: [TokenQuery]
 
         switch accountType {
@@ -98,12 +106,14 @@ class ChooseWatchService {
     }
 }
 
-extension ChooseWatchService {
-    func watch(enabledUids: [String]) {
-        let account = accountFactory.watchAccount(type: accountType, name: accountName)
+extension ChooseHardwareWalletService {
+    func link(enabledUids: [String]) {
+        let account = accountFactory.hardwareWallet(type: accountType, name: accountName)
+
         accountManager.save(account: account)
+        accountManager.set(lastCreatedAccount: account)
         enableWallets(account: account, enabledUids: enabledUids)
 
-        stat(page: .watchWallet, event: .watchWallet(walletType: accountType.statDescription))
+        stat(page: .linkHardwareWallet, event: .linkWallet(walletType: accountType.statDescription))
     }
 }

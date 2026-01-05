@@ -80,6 +80,12 @@ class AccountStorage {
             }
 
             type = .stellarAccount(accountId: accountId)
+        case .stellarHardwareAccount:
+            guard let accountId = record.dataKey else {
+                return nil
+            }
+
+            type = .stellarHardwareAccount(accountId: accountId)
         case .hdExtendedKey:
             guard let data = recoverData(id: id, typeName: typeName, keyName: .data) else {
                 return nil
@@ -151,6 +157,9 @@ class AccountStorage {
             dataKey = address
         case let .stellarAccount(accountId):
             typeName = .stellarAccount
+            dataKey = accountId
+        case let .stellarHardwareAccount(accountId):
+            typeName = .stellarHardwareAccount
             dataKey = accountId
         case let .hdExtendedKey(key):
             typeName = .hdExtendedKey
@@ -281,6 +290,7 @@ extension AccountStorage {
         case tronAddress
         case tonAddress
         case stellarAccount
+        case stellarHardwareAccount
         case hdExtendedKey
         case btcAddress
         case solanaAddress

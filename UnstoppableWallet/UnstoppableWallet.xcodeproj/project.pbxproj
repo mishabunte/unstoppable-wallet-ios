@@ -5077,6 +5077,11 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		7A5F14CF2EF5C50D0030FB41 /* HardwareWallet */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = HardwareWallet;
+			sourceTree = "<group>";
+		};
 		7AFA06E72EA6518300456A2F /* Solana */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = Solana;
@@ -5833,6 +5838,7 @@
 		11B354AB3C3435F2D5F39EE6 /* Modules */ = {
 			isa = PBXGroup;
 			children = (
+				7A5F14CF2EF5C50D0030FB41 /* HardwareWallet */,
 				6BEA17682DE5838E00BF73DD /* ZCashShieldTokens */,
 				D34D3E022DD614B7005C9ACC /* StellarSecretKey */,
 				D30C4D462D3A2AF20082B487 /* SendAddress */,
@@ -9462,6 +9468,7 @@
 				D3948F202ADA88D900FAE566 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
+				7A5F14CF2EF5C50D0030FB41 /* HardwareWallet */,
 				7AFA06E72EA6518300456A2F /* Solana */,
 			);
 			name = Development;
@@ -9529,6 +9536,7 @@
 				D3BA25A92ADFB042002B13EA /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
+				7A5F14CF2EF5C50D0030FB41 /* HardwareWallet */,
 				7AFA06E72EA6518300456A2F /* Solana */,
 			);
 			name = Production;
@@ -9752,6 +9760,7 @@
 				6B1D8DF62DEAD10900A52B01 /* XCRemoteSwiftPackageReference "Kingfisher" */,
 				7A35C3A72E9422480031A959 /* XCRemoteSwiftPackageReference "Base58Swift" */,
 				7A35C3AB2E942DD00031A959 /* XCRemoteSwiftPackageReference "SolanaKit" */,
+				7A7D2C5E2EF5BB9D0082521E /* XCRemoteSwiftPackageReference "Alamofire" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = D3285F4320BD158E00644076 /* Products */;
@@ -13890,6 +13899,14 @@
 				kind = branch;
 			};
 		};
+		7A7D2C5E2EF5BB9D0082521E /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.10.2;
+			};
+		};
 		D023D2612A249E59004F65B0 /* XCRemoteSwiftPackageReference "TronKit.Swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/horizontalsystems/TronKit.Swift.git";
@@ -13919,7 +13936,7 @@
 			repositoryURL = "https://github.com/horizontalsystems/HsCryptoKit.Swift";
 			requirement = {
 				kind = exactVersion;
-				version = 1.3.0;
+				version = 1.3.1;
 			};
 		};
 		D3604E4128F02A020066C366 /* XCRemoteSwiftPackageReference "EvmKit.Swift" */ = {

@@ -15,6 +15,7 @@ class ManageAccountsViewController: ThemeViewController {
     private let createCell = BaseSelectableThemeCell()
     private let restoreCell = BaseSelectableThemeCell()
     private let watchCell = BaseSelectableThemeCell()
+    private let linkWalletCell = BaseSelectableThemeCell()
 
     private var viewState = ManageAccountsViewModel.ViewState.empty
     private var isLoaded = false
@@ -78,8 +79,20 @@ class ManageAccountsViewController: ThemeViewController {
                 component.text = "onboarding.balance.import".localized
             },
         ]))
+        
+        linkWalletCell.set(backgroundStyle: .lawrence, isLast: true)
+        CellBuilderNew.buildStatic(cell: linkWalletCell, rootElement: .hStack([
+            .image24 { (component: ImageComponent) in
+                component.imageView.image = UIImage(named: "icon_hardware_wallet_24")?.withTintColor(.themeJacob)
+            },
+            .text { (component: TextComponent) in
+                component.font = .body
+                component.textColor = .themeJacob
+                component.text = "Link Hardware Wallet"
+            },
+        ]))
 
-        watchCell.set(backgroundStyle: .lawrence, isLast: true)
+        watchCell.set(backgroundStyle: .lawrence, isLast: false)
         CellBuilder.build(cell: watchCell, elements: [.image24, .text])
         watchCell.bind(index: 0, block: { (component: ImageComponent) in
             component.imageView.image = UIImage(named: "binocule_24")?.withTintColor(.themeJacob)
@@ -123,6 +136,12 @@ class ManageAccountsViewController: ThemeViewController {
         let viewController = WatchModule.viewController(sourceViewController: createAccountListener)
         present(viewController, animated: true)
         stat(page: .manageWallets, event: .open(page: .watchWallet))
+    }
+    
+    private func onTapLinkWallet() {
+        let viewController = LinkHardwareWalletModule.viewController()
+        present(viewController, animated: true)
+        stat(page: .manageWallets, event: .open(page: .linkHardwareWallet))
     }
 
     private func onTapEdit(accountId: String) {
@@ -263,6 +282,15 @@ extension ManageAccountsViewController: SectionsDataSource {
                         autoDeselect: true,
                         action: { [weak self] in
                             self?.onTapWatch()
+                        }
+                    ),
+                    StaticRow(
+                        cell: linkWalletCell,
+                        id: "link_wallet",
+                        height: .heightCell48,
+                        autoDeselect: true,
+                        action: { [weak self] in
+                            self?.onTapLinkWallet()
                         }
                     ),
                 ]

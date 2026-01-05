@@ -32,6 +32,15 @@ class Account: Identifiable {
             return false
         }
     }
+    
+    var hardwareWallet: Bool {
+        switch type {
+        case .stellarHardwareAccount:
+            return true
+        default:
+            return false
+        }
+    }
 
     var nonStandard: Bool {
         guard case let .mnemonic(_, _, bip39Compliant) = type else {

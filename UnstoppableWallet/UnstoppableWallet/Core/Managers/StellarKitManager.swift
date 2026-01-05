@@ -38,6 +38,8 @@ class StellarKitManager {
             accountId = keyPair.accountId
         case let .stellarAccount(_accountId):
             accountId = _accountId
+        case let .stellarHardwareAccount(_accountId):
+            accountId = _accountId
         default:
             throw AdapterError.unsupportedAccount
         }

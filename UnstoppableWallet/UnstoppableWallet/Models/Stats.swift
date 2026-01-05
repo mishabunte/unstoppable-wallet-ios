@@ -87,6 +87,7 @@ enum StatPage: String {
     case indicators
     case info
     case language
+    case linkHardwareWallet = "link_hardware_wallet"
     case main
     case manageWallet = "manage_wallet"
     case manageWallets = "manage_wallets"
@@ -187,6 +188,7 @@ enum StatEvent {
     case exportFull
     case hideBalanceButtons(hide: Bool)
     case importWallet(walletType: String)
+    case linkWallet(walletType: String)
     case importFull
     case open(page: StatPage)
     case openBlockchainSettingsBtc(chainUid: String)
@@ -270,6 +272,7 @@ enum StatEvent {
         case .hideBalanceButtons: return "hide_balance_buttons"
         case .importFull: return "import_full"
         case .importWallet: return "import_wallet"
+        case .linkWallet: return "link_wallet"
         case .open, .openCategory, .openCoin, .openPlatform, .openReceive, .openResend, .openSector, .openSend, .openSendTokenList, .openTokenPage,
              .openBlockchainSettingsBtc, .openBlockchainSettingsEvm, .openBlockchainSettingsEvmAdd: return "open_page"
         case .openPremium: return "open_premium_from"
@@ -341,6 +344,7 @@ enum StatEvent {
         case let .enableToken(token): return params(token: token)
         case let .hideBalanceButtons(hide): return [.shown: hide]
         case let .importWallet(walletType): return [.walletType: walletType]
+        case let .linkWallet(walletType): return [.walletType: walletType]
         case let .open(page): return [.page: page.rawValue]
         case let .openBlockchainSettingsBtc(chainUid: chainUid): return [.page: StatPage.blockchainSettingsBtc.rawValue, .chainUid: chainUid]
         case let .openBlockchainSettingsEvm(chainUid: chainUid): return [.page: StatPage.blockchainSettingsEvm.rawValue, .chainUid: chainUid]

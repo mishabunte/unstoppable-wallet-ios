@@ -1780,6 +1780,19 @@
 "create_wallet.error.forbidden_symbols" = "Please use only supported symbols:A-Z a-z 0-9 ' \" ` & / ? ! : ; . , ~ * $ = + - [ ] ( ) { } < > \\ _ # @ | %";
 "create_wallet.error.invalid_confirmation" = "Passphrase confirmation does not match";
 
+// Link Hardware Wallet
+
+"link_hardware_wallet.title" = "Link Hardware Wallet";
+"link_hardware_wallet.name" = "Name";
+"link_hardware_wallet.address" = "Address or Domain";
+"link_hardware_wallet.address_placeholder" = "Enter wallet address";
+"link_hardware_wallet.address_description" = "Enter the public address of your hardware wallet to watch its balance and receive funds.";
+"link_hardware_wallet.account_type" = "Account Type";
+"link_hardware_wallet.link" = "Link";
+"link_hardware_wallet.error.empty_address" = "Address cannot be empty";
+"link_hardware_wallet.error.invalid_address" = "Invalid address";
+"link_hardware_wallet.error.unsupported_account_type" = "Unsupported account type";
+
 // Restore Select
 
 "restore_select.title" = "Choose Blockchains";

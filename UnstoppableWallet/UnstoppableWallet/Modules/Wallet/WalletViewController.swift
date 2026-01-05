@@ -93,6 +93,13 @@ class WalletViewController: ThemeViewController {
             target: self,
             action: #selector(onTapRestore)
         )
+        
+        placeholderView.addPrimaryButton(
+            style: .yellow,
+            title: "Link Hardware Wallet",
+            target: self,
+            action: #selector(onTapLinkWallet)
+        )
 
         placeholderView.addPrimaryButton(
             style: .transparent,
@@ -170,6 +177,13 @@ class WalletViewController: ThemeViewController {
         present(viewController, animated: true)
 
         stat(page: .balance, event: .open(page: .newWallet))
+    }
+    
+    @objc func onTapLinkWallet() {
+        let viewController = LinkHardwareWalletModule.viewController()
+        present(viewController, animated: true)
+
+        stat(page: .balance, event: .open(page: .linkHardwareWallet))
     }
 
     @objc func onTapRestore() {

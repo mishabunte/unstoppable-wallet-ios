@@ -15,6 +15,7 @@ enum AccountType: Identifiable {
     case tronAddress(address: TronKit.Address)
     case tonAddress(address: String)
     case stellarAccount(accountId: String)
+    case stellarHardwareAccount(accountId: String)
     case hdExtendedKey(key: HDExtendedKey)
     case btcAddress(address: String, blockchainType: BlockchainType, tokenType: TokenType)
     case solanaAddress(address: String)
@@ -58,6 +59,8 @@ enum AccountType: Identifiable {
         case let .tonAddress(address):
             privateData = address.hs.data
         case let .stellarAccount(accountId):
+            privateData = accountId.hs.data
+        case let .stellarHardwareAccount(accountId):
             privateData = accountId.hs.data
         case let .hdExtendedKey(key):
             privateData = key.serialized
@@ -135,7 +138,7 @@ enum AccountType: Identifiable {
             case (.zkSync, .native), (.zkSync, .eip20): return true
             default: return false
             }
-        case .stellarSecretKey, .stellarAccount:
+        case .stellarSecretKey, .stellarAccount, .stellarHardwareAccount:
             switch (token.blockchainType, token.type) {
             case (.stellar, .native), (.stellar, .stellar): return true
             default: return false
@@ -152,7 +155,7 @@ enum AccountType: Identifiable {
             }
         case let .btcAddress(_, blockchainType, tokenType):
             return token.blockchainType == blockchainType && token.type == tokenType
-        case let .solanaAddress:
+        case .solanaAddress:
             switch (token.blockchainType, token.type) {
             case (.solana, .native), (.solana, .spl): return true
             default: return false
@@ -200,6 +203,8 @@ enum AccountType: Identifiable {
             return "TON Address"
         case .stellarAccount:
             return "Stellar Account"
+        case .stellarHardwareAccount:
+            return "Stellar Hardware Account"
         case let .hdExtendedKey(key):
             switch key {
             case .private:
@@ -238,6 +243,8 @@ enum AccountType: Identifiable {
             return "ton_address"
         case .stellarAccount:
             return "stellar_account"
+        case .stellarHardwareAccount:
+            return "stellar_hardware_account"
         case let .hdExtendedKey(key):
             switch key {
             case .private:
@@ -268,6 +275,8 @@ enum AccountType: Identifiable {
         case let .tonAddress(address):
             return address.shortened
         case let .stellarAccount(accountId):
+            return accountId.shortened
+        case let .stellarHardwareAccount(accountId):
             return accountId.shortened
         case let .btcAddress(address, _, _):
             return address.shortened
@@ -369,6 +378,8 @@ extension AccountType {
             return AccountType.tonAddress(address: string)
         case .stellarAccount:
             return AccountType.stellarAccount(accountId: string)
+        case .stellarHardwareAccount:
+            return AccountType.stellarHardwareAccount(accountId: string)
         }
     }
 
@@ -380,6 +391,7 @@ extension AccountType {
         case tronAddress = "tron_address"
         case tonAddress = "ton_address"
         case stellarAccount = "stellar_account"
+        case stellarHardwareAccount = "stellar_hardware_account"
         case hdExtendedKey = "hd_extended_key"
         case btcAddress = "btc_address_key"
         case solanaAddress = "solana_address"
@@ -396,6 +408,17 @@ extension AccountType {
             case .hdExtendedKey: self = .hdExtendedKey
             case .btcAddress: self = .btcAddress
             case .solanaAddress: self = .solanaAddress
+            case .stellarHardwareAccount: self = .stellarHardwareAccount
+            }
+        }
+        
+        func prefix() -> String {
+            switch self {
+            case .evmPrivateKey, .evmAddress: return "eth:"
+            case .stellarSecretKey, .stellarAccount, .stellarHardwareAccount: return "stellar:"
+            case .btcAddress: return "btc:"
+            case .solanaAddress: return "solana:"
+            default: return ""
             }
         }
     }
@@ -417,6 +440,8 @@ extension AccountType: Hashable {
         case let (.tonAddress(lhsAddress), .tonAddress(rhsAddress)):
             return lhsAddress == rhsAddress
         case let (.stellarAccount(lhsAccountId), .stellarAccount(rhsAccountId)):
+            return lhsAccountId == rhsAccountId
+        case let (.stellarHardwareAccount(lhsAccountId), .stellarHardwareAccount(rhsAccountId)):
             return lhsAccountId == rhsAccountId
         case let (.hdExtendedKey(lhsKey), .hdExtendedKey(rhsKey)):
             return lhsKey == rhsKey
@@ -450,6 +475,9 @@ extension AccountType: Hashable {
             hasher.combine(address)
         case let .stellarAccount(accountId):
             hasher.combine("stellarAccount")
+            hasher.combine(accountId)
+        case let .stellarHardwareAccount(accountId):
+            hasher.combine("stellarHardwareAccount")
             hasher.combine(accountId)
         case let .hdExtendedKey(key):
             hasher.combine("hdExtendedKey")

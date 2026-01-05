@@ -47,4 +47,16 @@ extension AccountFactory {
             fileBackedUp: false
         )
     }
+    
+    func hardwareWallet(type: AccountType, name: String) -> Account {
+        Account(
+            id: UUID().uuidString,
+            level: accountManager.currentLevel,
+            name: name,
+            type: type,
+            origin: .restored,
+            backedUp: true,
+            fileBackedUp: false
+        )
+    }
 }
