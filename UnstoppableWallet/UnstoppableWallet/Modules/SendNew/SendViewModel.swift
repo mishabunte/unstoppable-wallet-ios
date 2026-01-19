@@ -18,6 +18,8 @@ class SendViewModel: ObservableObject {
     let currency: Currency
 
     private let address: String?
+    public let isHardware: Bool
+    private var signedTransaction: String? = nil
 
     @Published var rates = [String: Decimal]()
 
@@ -57,6 +59,10 @@ class SendViewModel: ObservableObject {
         guard let data = state.data, data.canSend else {
             return false
         }
+        
+        if self.needsSignature {
+            return false
+        }
 
         if let service = transactionService, service.cautions.contains(where: { $0.type == .error }) {
             return false
@@ -64,11 +70,17 @@ class SendViewModel: ObservableObject {
 
         return true
     }
+    
+    var needsSignature: Bool {
+        return self.isHardware ? signedTransaction == nil : false
+    }
 
-    init(sendData: SendData, address: String? = nil) {
+    init(sendData: SendData, address: String? = nil, isHardware: Bool = false) {
         handler = SendHandlerFactory.handler(sendData: sendData)
         currency = currencyManager.baseCurrency
         self.address = address
+        self.isHardware = isHardware
+        print("is hardware: \(self.isHardware)")
 
         if let handler {
             transactionService = TransactionServiceFactory.transactionService(blockchainType: handler.baseToken.blockchainType, initialTransactionSettings: handler.initialTransactionSettings)
@@ -147,6 +159,16 @@ extension SendViewModel {
         }
         .erased()
     }
+    
+    func startNfc() async throws {
+        do {
+            
+        } catch {
+            await set(sending: false)
+            errorSubject.send(error.smartDescription)
+            throw error
+        }
+    }
 
     func send() async throws {
         do {
@@ -159,8 +181,12 @@ extension SendViewModel {
             }
 
             await set(sending: true)
-
-            _ = try await handler.send(data: data)
+            
+            if self.isHardware {
+                _ = try await handler.sendSigned(data: data)
+            } else {
+                _ = try await handler.send(data: data)
+            }
 
             if let address {
                 try? recentAddressStorage.save(address: address, blockchainUid: handler.baseToken.blockchain.uid)

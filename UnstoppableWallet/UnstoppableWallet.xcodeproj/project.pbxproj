@@ -2086,12 +2086,16 @@
 		6BEA177B2DE8319D00BF73DD /* ShieldSendView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BEA17792DE8319600BF73DD /* ShieldSendView.swift */; };
 		6BFA4E032D26B58A0044567A /* MarketAdvancedSearchCategoriesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BFA4E022D26B58A0044567A /* MarketAdvancedSearchCategoriesView.swift */; };
 		6BFA4E042D26B58A0044567A /* MarketAdvancedSearchCategoriesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BFA4E022D26B58A0044567A /* MarketAdvancedSearchCategoriesView.swift */; };
+		7A103A352F15606D008F465E /* StellarKit in Frameworks */ = {isa = PBXBuildFile; productRef = 7A103A342F15606D008F465E /* StellarKit */; };
+		7A103A372F156078008F465E /* StellarKit in Frameworks */ = {isa = PBXBuildFile; productRef = 7A103A362F156078008F465E /* StellarKit */; };
 		7A35C3A92E9424AF0031A959 /* SolanaKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A35C3A82E9424AF0031A959 /* SolanaKitManager.swift */; };
 		7A35C3AA2E9424AF0031A959 /* SolanaKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A35C3A82E9424AF0031A959 /* SolanaKitManager.swift */; };
 		7A35C3AD2E9438050031A959 /* SolanaKit in Frameworks */ = {isa = PBXBuildFile; productRef = 7A35C3AC2E9438050031A959 /* SolanaKit */; };
 		7A35C3AF2E9438120031A959 /* SolanaKit in Frameworks */ = {isa = PBXBuildFile; productRef = 7A35C3AE2E9438120031A959 /* SolanaKit */; };
 		7A35C3B12E94383D0031A959 /* Base58Swift in Frameworks */ = {isa = PBXBuildFile; productRef = 7A35C3B02E94383D0031A959 /* Base58Swift */; };
 		7A35C3B32E9438480031A959 /* Base58Swift in Frameworks */ = {isa = PBXBuildFile; productRef = 7A35C3B22E9438480031A959 /* Base58Swift */; };
+		7AB5F1D32F0C245C00BFC9F0 /* UnlinkHardwareWalletViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AB5F1D22F0C245C00BFC9F0 /* UnlinkHardwareWalletViewController.swift */; };
+		7AB5F1D42F0C245C00BFC9F0 /* UnlinkHardwareWalletViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AB5F1D22F0C245C00BFC9F0 /* UnlinkHardwareWalletViewController.swift */; };
 		7AE2C03C2E9D20D900748CB0 /* SolanaAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AE2C03B2E9D20D100748CB0 /* SolanaAdapter.swift */; };
 		7AE2C03D2E9D20D900748CB0 /* SolanaAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AE2C03B2E9D20D100748CB0 /* SolanaAdapter.swift */; };
 		7AE2C03F2E9D359900748CB0 /* SplTokenAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AE2C03E2E9D359000748CB0 /* SplTokenAdapter.swift */; };
@@ -3225,8 +3229,6 @@
 		D3A87D5A2C89BEAE00F6F619 /* AddJettonBlockchainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3A87D582C89BEAE00F6F619 /* AddJettonBlockchainService.swift */; };
 		D3A87D5C2C8EFB1A00F6F619 /* EvmAccountRestoreState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3A87D5B2C8EFB1A00F6F619 /* EvmAccountRestoreState.swift */; };
 		D3A87D5D2C8EFB1A00F6F619 /* EvmAccountRestoreState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3A87D5B2C8EFB1A00F6F619 /* EvmAccountRestoreState.swift */; };
-		D3AEB8752DB8FAA200E385C8 /* StellarKit in Frameworks */ = {isa = PBXBuildFile; productRef = D3AEB8742DB8FAA200E385C8 /* StellarKit */; };
-		D3AEB8772DB8FAB600E385C8 /* StellarKit in Frameworks */ = {isa = PBXBuildFile; productRef = D3AEB8762DB8FAB600E385C8 /* StellarKit */; };
 		D3AEB8792DB8FB8A00E385C8 /* StellarKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3AEB8782DB8FB8A00E385C8 /* StellarKitManager.swift */; };
 		D3AEB87A2DB8FB8A00E385C8 /* StellarKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3AEB8782DB8FB8A00E385C8 /* StellarKitManager.swift */; };
 		D3AEB87C2DB8FE7A00E385C8 /* StellarAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3AEB87B2DB8FE7A00E385C8 /* StellarAdapter.swift */; };
@@ -4472,6 +4474,7 @@
 		6BEA17792DE8319600BF73DD /* ShieldSendView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShieldSendView.swift; sourceTree = "<group>"; };
 		6BFA4E022D26B58A0044567A /* MarketAdvancedSearchCategoriesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarketAdvancedSearchCategoriesView.swift; sourceTree = "<group>"; };
 		7A35C3A82E9424AF0031A959 /* SolanaKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolanaKitManager.swift; sourceTree = "<group>"; };
+		7AB5F1D22F0C245C00BFC9F0 /* UnlinkHardwareWalletViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnlinkHardwareWalletViewController.swift; sourceTree = "<group>"; };
 		7AE2C03B2E9D20D100748CB0 /* SolanaAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolanaAdapter.swift; sourceTree = "<group>"; };
 		7AE2C03E2E9D359000748CB0 /* SplTokenAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplTokenAdapter.swift; sourceTree = "<group>"; };
 		7AFA06ED2EA6640500456A2F /* OpenSeaNftProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenSeaNftProvider.swift; sourceTree = "<group>"; };
@@ -5100,7 +5103,6 @@
 				6B55E33D2AF26D7A00616B60 /* Starscream in Frameworks */,
 				D3E323C82AE7B8E400F73914 /* KeychainAccess in Frameworks */,
 				500F1D1327AA87D1002AA419 /* AlignedCollectionViewFlowLayout in Frameworks */,
-				D3AEB8752DB8FAA200E385C8 /* StellarKit in Frameworks */,
 				6BDA29AB29D6F37C003847ED /* ECashKit in Frameworks */,
 				D36287C82CA3DF7A00ADAF3B /* TonConnectAPI in Frameworks */,
 				D3604E8C28F03DBF0066C366 /* BitcoinCashKit in Frameworks */,
@@ -5127,6 +5129,7 @@
 				6B6E14262DEDB57B007F4A39 /* Kingfisher in Frameworks */,
 				7A35C3B32E9438480031A959 /* Base58Swift in Frameworks */,
 				7A35C3AD2E9438050031A959 /* SolanaKit in Frameworks */,
+				7A103A372F156078008F465E /* StellarKit in Frameworks */,
 				D38405B9218317DF007D50AD /* AVFoundation.framework in Frameworks */,
 				D3604E5B28F02B280066C366 /* OneInchKit in Frameworks */,
 				D3604EA028F03DC00066C366 /* DashKit in Frameworks */,
@@ -5154,7 +5157,6 @@
 				6B6D3F2B2DED72B700AB2915 /* SkeletonView in Frameworks */,
 				D3AF5A8929FFD85800C1399E /* RxCocoa in Frameworks */,
 				500F1D1127AA87BC002AA419 /* AlignedCollectionViewFlowLayout in Frameworks */,
-				D3AEB8772DB8FAB600E385C8 /* StellarKit in Frameworks */,
 				D3DDFA362DDF2D14003CADDF /* TonConnectAPI in Frameworks */,
 				D3604E6928F02DF30066C366 /* BitcoinCashKit in Frameworks */,
 				D3993DC228F42992008720FB /* UnstoppableDomainsResolution in Frameworks */,
@@ -5182,6 +5184,7 @@
 				D3604E5028F02AE70066C366 /* UniswapKit in Frameworks */,
 				D3BF1E63274CBBCE00229A00 /* DeepDiff in Frameworks */,
 				D3993DA528F4229F008720FB /* ZcashLightClientKit in Frameworks */,
+				7A103A352F15606D008F465E /* StellarKit in Frameworks */,
 				D023D2632A249E59004F65B0 /* TronKit in Frameworks */,
 				D3C187D5290FCF7D00FE1900 /* (null) in Frameworks */,
 				D3604E8228F03C6B0066C366 /* FeeRateKit in Frameworks */,
@@ -6403,6 +6406,7 @@
 		11B3586A7D20121BC532047E /* Unlink */ = {
 			isa = PBXGroup;
 			children = (
+				7AB5F1D22F0C245C00BFC9F0 /* UnlinkHardwareWalletViewController.swift */,
 				11B3529D276325D741CAEEF5 /* UnlinkModule.swift */,
 				11B351A464627DCBABD1AC17 /* UnlinkService.swift */,
 				11B35419B0C846238DDC50F3 /* UnlinkViewModel.swift */,
@@ -9508,12 +9512,12 @@
 				6BBCE4A22BDA419200ABBD55 /* Web3Wallet */,
 				6BDDB59B2C1816B500DE9D56 /* TonKit */,
 				D36287C72CA3DF7A00ADAF3B /* TonConnectAPI */,
-				D3AEB8742DB8FAA200E385C8 /* StellarKit */,
 				D3DDFA332DDF2D02003CADDF /* TonConnectAPI */,
 				6B6D3F2C2DED72BF00AB2915 /* SkeletonView */,
 				6B6E14252DEDB57B007F4A39 /* Kingfisher */,
 				7A35C3AC2E9438050031A959 /* SolanaKit */,
 				7A35C3B22E9438480031A959 /* Base58Swift */,
+				7A103A362F156078008F465E /* StellarKit */,
 			);
 			productName = Wallet;
 			productReference = D38405CE218317DF007D50AD /* Unstoppable D.app */;
@@ -9575,12 +9579,12 @@
 				D08C93AE2B91E39E00A7D1D5 /* Hodler */,
 				6BBCE4A42BDA419B00ABBD55 /* Web3Wallet */,
 				6BDDB5A02C1AC73D00DE9D56 /* TonKit */,
-				D3AEB8762DB8FAB600E385C8 /* StellarKit */,
 				D3DDFA352DDF2D14003CADDF /* TonConnectAPI */,
 				6B6D3F2A2DED72B700AB2915 /* SkeletonView */,
 				6B6E14272DEDB58A007F4A39 /* Kingfisher */,
 				7A35C3AE2E9438120031A959 /* SolanaKit */,
 				7A35C3B02E94383D0031A959 /* Base58Swift */,
+				7A103A342F15606D008F465E /* StellarKit */,
 			);
 			productName = Wallet;
 			productReference = D38406BE21831B3D007D50AD /* Unstoppable.app */;
@@ -9753,7 +9757,6 @@
 				D08C93AD2B91E37E00A7D1D5 /* XCRemoteSwiftPackageReference "Hodler" */,
 				6BF66DD82BA1A73300963242 /* XCRemoteSwiftPackageReference "ObjectMapper" */,
 				6BDDB59F2C1AC73200DE9D56 /* XCRemoteSwiftPackageReference "TonKit" */,
-				D3AEB8732DB8FAA200E385C8 /* XCRemoteSwiftPackageReference "StellarKit" */,
 				D3DDFA322DDF2D02003CADDF /* XCRemoteSwiftPackageReference "TonConnectAPI" */,
 				6B1D8DF32DEACF6A00A52B01 /* XCRemoteSwiftPackageReference "SkeletonView" */,
 				6B1D8DF42DEACFA200A52B01 /* XCRemoteSwiftPackageReference "SnapKit" */,
@@ -9761,6 +9764,7 @@
 				7A35C3A72E9422480031A959 /* XCRemoteSwiftPackageReference "Base58Swift" */,
 				7A35C3AB2E942DD00031A959 /* XCRemoteSwiftPackageReference "SolanaKit" */,
 				7A7D2C5E2EF5BB9D0082521E /* XCRemoteSwiftPackageReference "Alamofire" */,
+				7AB5F1D52F0C416700BFC9F0 /* XCRemoteSwiftPackageReference "StellarKit.Swift" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = D3285F4320BD158E00644076 /* Products */;
@@ -10264,6 +10268,7 @@
 				11B355EBC83D70F2D41D9217 /* WalletViewItemFactory.swift in Sources */,
 				11B3599054A1F3D3F94444AA /* WalletSorter.swift in Sources */,
 				6BBB92B42D10142900112409 /* PurchaseBottomSheetViewModel.swift in Sources */,
+				7AB5F1D32F0C245C00BFC9F0 /* UnlinkHardwareWalletViewController.swift in Sources */,
 				11B354E85FD7EE82D34FD1C4 /* BalanceCell.swift in Sources */,
 				11B3599823E5E2A406C1447A /* BalanceTopView.swift in Sources */,
 				11B35831AF48B09CE3349E5C /* BalanceCoinIconHolder.swift in Sources */,
@@ -11813,6 +11818,7 @@
 				11B359B09D7E49066368CFE0 /* WalletViewItemFactory.swift in Sources */,
 				11B3583C648DBE72892FEEDB /* WalletSorter.swift in Sources */,
 				6BBB92B32D10142900112409 /* PurchaseBottomSheetViewModel.swift in Sources */,
+				7AB5F1D42F0C245C00BFC9F0 /* UnlinkHardwareWalletViewController.swift in Sources */,
 				11B3511AD7595AF1B174D85C /* BalanceCell.swift in Sources */,
 				11B35480339EC26092522079 /* BalanceTopView.swift in Sources */,
 				11B356A300ED689602ACD35D /* BalanceCoinIconHolder.swift in Sources */,
@@ -13907,6 +13913,14 @@
 				minimumVersion = 5.10.2;
 			};
 		};
+		7AB5F1D52F0C416700BFC9F0 /* XCRemoteSwiftPackageReference "StellarKit.Swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/arsenalnbly/StellarKit.Swift.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 		D023D2612A249E59004F65B0 /* XCRemoteSwiftPackageReference "TronKit.Swift" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/horizontalsystems/TronKit.Swift.git";
@@ -14065,14 +14079,6 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 6.1.0;
-			};
-		};
-		D3AEB8732DB8FAA200E385C8 /* XCRemoteSwiftPackageReference "StellarKit" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/horizontalsystems/StellarKit.Swift";
-			requirement = {
-				kind = exactVersion;
-				version = 1.0.8;
 			};
 		};
 		D3AF5A8729FFD85800C1399E /* XCRemoteSwiftPackageReference "RxSwift" */ = {
@@ -14278,6 +14284,16 @@
 		6BDDB5A02C1AC73D00DE9D56 /* TonKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = TonKit;
+		};
+		7A103A342F15606D008F465E /* StellarKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7AB5F1D52F0C416700BFC9F0 /* XCRemoteSwiftPackageReference "StellarKit.Swift" */;
+			productName = StellarKit;
+		};
+		7A103A362F156078008F465E /* StellarKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7AB5F1D52F0C416700BFC9F0 /* XCRemoteSwiftPackageReference "StellarKit.Swift" */;
+			productName = StellarKit;
 		};
 		7A35C3AC2E9438050031A959 /* SolanaKit */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -14512,16 +14528,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = D3993DC028F42992008720FB /* XCRemoteSwiftPackageReference "resolution-swift" */;
 			productName = UnstoppableDomainsResolution;
-		};
-		D3AEB8742DB8FAA200E385C8 /* StellarKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = D3AEB8732DB8FAA200E385C8 /* XCRemoteSwiftPackageReference "StellarKit" */;
-			productName = StellarKit;
-		};
-		D3AEB8762DB8FAB600E385C8 /* StellarKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = D3AEB8732DB8FAA200E385C8 /* XCRemoteSwiftPackageReference "StellarKit" */;
-			productName = StellarKit;
 		};
 		D3AF5A8829FFD85800C1399E /* RxCocoa */ = {
 			isa = XCSwiftPackageProductDependency;

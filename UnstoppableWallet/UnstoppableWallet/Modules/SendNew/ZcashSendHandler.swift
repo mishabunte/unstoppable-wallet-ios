@@ -54,6 +54,10 @@ extension ZcashSendHandler: ISendHandler {
 
         try await adapter.send(proposal: data.proposal)
     }
+    
+    func sendSigned(data: ISendData) async throws {
+        // not implemented
+    }
 }
 
 extension ZcashSendHandler {

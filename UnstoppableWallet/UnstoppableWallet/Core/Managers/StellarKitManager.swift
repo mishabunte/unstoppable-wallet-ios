@@ -127,6 +127,8 @@ extension StellarKitManager {
             return try WalletUtils.createKeyPair(mnemonic: words.joined(separator: " "), passphrase: salt, index: 0)
         case let .stellarSecretKey(secretSeed):
             return try KeyPair(secretSeed: secretSeed)
+        case let .stellarHardwareAccount(accountId):
+            return try KeyPair(accountId: accountId)
         default:
             throw AdapterError.unsupportedAccount
         }

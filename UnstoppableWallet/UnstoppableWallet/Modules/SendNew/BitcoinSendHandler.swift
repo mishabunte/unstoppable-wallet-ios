@@ -62,6 +62,10 @@ extension BitcoinSendHandler: ISendHandler {
 
         try adapter.send(params: data.params)
     }
+    
+    func sendSigned(data: ISendData) async throws {
+        // not implemented
+    }
 }
 
 extension BitcoinSendHandler {

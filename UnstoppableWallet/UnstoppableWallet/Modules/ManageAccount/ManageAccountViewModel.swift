@@ -55,7 +55,7 @@ class ManageAccountViewModel {
                 "manage_account.backup.has_backup_description".localized
         }
 
-        if !account.watchAccount {
+        if !(account.watchAccount || account.hardwareWallet) {
             backupActions.append(.cloudBackedUp(isCloudBackedUp, isManualBackedUp: account.backedUp))
         }
 

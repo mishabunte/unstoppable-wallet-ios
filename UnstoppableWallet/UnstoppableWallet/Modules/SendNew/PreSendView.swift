@@ -56,7 +56,7 @@ struct PreSendView: View {
                 isActive: $confirmPresented,
                 destination: {
                     if let sendData = viewModel.sendData {
-                        RegularSendView(sendData: sendData.sendData, address: sendData.address) {
+                        RegularSendView(sendData: sendData.sendData, address: sendData.address, isHardware: viewModel.hardwareWallet) {
                             HudHelper.instance.show(banner: .sent)
                             onDismiss()
                         }

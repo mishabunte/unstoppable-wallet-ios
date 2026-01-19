@@ -105,6 +105,16 @@ extension StellarSendHandler: ISendHandler {
 
         _ = try await StellarKit.Kit.send(operations: operations, memo: memo, keyPair: keyPair, testNet: false)
     }
+    
+    func sendSigned(data: ISendData) async throws {
+        guard let data = data as? SendData, let operations = data.operations else {
+            throw SendError.invalidData
+        }
+
+        let memo = data.memo.map { Memo.text($0) } ?? Memo.none
+
+        _ = try await StellarKit.Kit.send(operations: operations, memo: memo, keyPair: keyPair, testNet: false)
+    }
 }
 
 extension StellarSendHandler {

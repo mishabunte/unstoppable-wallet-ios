@@ -102,6 +102,10 @@ extension WalletConnectSendHandler: ISendHandler {
 
         signService.approveRequest(id: request.id, result: fullTransaction.transaction.hash)
     }
+    
+    func sendSigned(data: ISendData) async throws {
+        // not implemented
+    }
 }
 
 extension WalletConnectSendHandler {

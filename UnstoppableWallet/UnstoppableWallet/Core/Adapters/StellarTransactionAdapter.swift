@@ -125,7 +125,7 @@ extension StellarTransactionAdapter: ITransactionsAdapter {
             Task { [stellarKit, converter] in
                 let pagingToken = (from as? StellarTransactionRecord).map(\.operation.pagingToken)
 
-                let operations = stellarKit.operations(tagQuery: tagQuery, pagingToken: pagingToken, limit: limit)
+                let operations = stellarKit.operations(tagQuery: tagQuery, pagingToken: pagingToken, descending: false, limit: limit)
                 let records = operations.map { converter.transactionRecord(operation: $0) }
 
                 observer(.success(records))

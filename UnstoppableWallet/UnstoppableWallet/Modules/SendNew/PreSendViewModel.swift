@@ -57,6 +57,8 @@ class PreSendViewModel: ObservableObject {
             }
         }
     }
+    
+    public let hardwareWallet: Bool
 
     @Published var fiatAmountString: String = "" {
         didSet {
@@ -98,6 +100,8 @@ class PreSendViewModel: ObservableObject {
         self.wallet = wallet
         self.handler = handler
         self.resolvedAddress = resolvedAddress
+        
+        self.hardwareWallet = wallet.account.hardwareWallet
 
         currency = currencyManager.baseCurrency
 

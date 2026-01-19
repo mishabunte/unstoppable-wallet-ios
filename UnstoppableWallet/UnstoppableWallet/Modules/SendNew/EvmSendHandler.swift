@@ -95,6 +95,10 @@ extension EvmSendHandler: ISendHandler {
             nonce: data.nonce
         )
     }
+    
+    func sendSigned(data: ISendData) async throws {
+        // not implemented
+    }
 }
 
 extension EvmSendHandler {

@@ -109,6 +109,10 @@ extension TronSendHandler: ISendHandler {
             feeLimit: totalFees
         )
     }
+    
+    func sendSigned(data: ISendData) async throws {
+        // not implemented
+    }
 }
 
 extension TronSendHandler {

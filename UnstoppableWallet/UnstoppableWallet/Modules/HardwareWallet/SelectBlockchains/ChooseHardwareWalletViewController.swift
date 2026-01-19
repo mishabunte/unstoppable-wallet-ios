@@ -42,7 +42,7 @@ class ChooseHardwareWalletViewController: CoinToggleViewController {
         gradientWrapperView.addSubview(linkButton)
 
         linkButton.set(style: .yellow)
-        linkButton.setTitle("watch_address.watch".localized, for: .normal)
+        linkButton.setTitle("link_hardware_wallet.link".localized, for: .normal)
         linkButton.addTarget(self, action: #selector(onTapLink), for: .touchUpInside)
 
         subscribe(disposeBag, viewModel.linkEnabledDriver) { [weak self] enabled in

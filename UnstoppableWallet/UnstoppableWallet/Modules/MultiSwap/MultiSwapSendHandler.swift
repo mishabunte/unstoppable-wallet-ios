@@ -57,6 +57,10 @@ extension MultiSwapSendHandler: ISendHandler {
             walletManager.save(wallets: [wallet])
         }
     }
+    
+    func sendSigned(data: ISendData) async throws {
+        // not implemented
+    }
 }
 
 extension MultiSwapSendHandler {

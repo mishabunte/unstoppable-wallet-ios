@@ -6,9 +6,11 @@ struct RegularSendView: View {
     @StateObject var sendViewModel: SendViewModel
 
     private let onSuccess: () -> Void
+    public let isHardware: Bool
 
-    init(sendData: SendData, address: String? = nil, onSuccess: @escaping () -> Void) {
-        _sendViewModel = .init(wrappedValue: SendViewModel(sendData: sendData, address: address))
+    init(sendData: SendData, address: String? = nil, isHardware: Bool = false, onSuccess: @escaping () -> Void) {
+        self.isHardware = isHardware
+        _sendViewModel = .init(wrappedValue: SendViewModel(sendData: sendData, address: address, isHardware: isHardware))
         self.onSuccess = onSuccess
     }
 
@@ -30,6 +32,13 @@ struct RegularSendView: View {
                                 onSuccess()
                             }
                         )
+                    } else if sendViewModel.needsSignature {
+                        Button(action: {
+                             
+                        }) {
+                            Text("send.next_button".localized)
+                        }
+                        .buttonStyle(PrimaryButtonStyle(style: .gray))
                     } else {
                         Button(action: {
                             sendViewModel.sync()

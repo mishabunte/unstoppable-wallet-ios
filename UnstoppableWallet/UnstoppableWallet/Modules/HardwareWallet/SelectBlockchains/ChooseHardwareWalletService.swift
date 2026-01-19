@@ -111,7 +111,7 @@ extension ChooseHardwareWalletService {
         let account = accountFactory.hardwareWallet(type: accountType, name: accountName)
 
         accountManager.save(account: account)
-        accountManager.set(lastCreatedAccount: account)
+//        accountManager.set(lastCreatedAccount: account)
         enableWallets(account: account, enabledUids: enabledUids)
 
         stat(page: .linkHardwareWallet, event: .linkWallet(walletType: accountType.statDescription))
