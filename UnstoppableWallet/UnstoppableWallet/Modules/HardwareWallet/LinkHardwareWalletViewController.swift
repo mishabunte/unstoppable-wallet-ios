@@ -16,6 +16,8 @@ class LinkHardwareWalletViewController: KeyboardAwareViewController {
     private let nameCell = TextFieldCell()
     private let addressInputCell = TextInputCell(statPage: .linkHardwareWallet, statEntity: .key)
     private let addressCautionCell = FormCautionCell()
+    
+    private var accountTypeTitle = ""
 
     private var isLoaded = false
     private weak var sourceViewController: UIViewController?
@@ -23,6 +25,7 @@ class LinkHardwareWalletViewController: KeyboardAwareViewController {
     init(viewModel: LinkHardwareWalletViewModel, sourceViewController: UIViewController?) {
         self.viewModel = viewModel
         self.sourceViewController = sourceViewController
+        self.accountTypeTitle = viewModel.accountType.title
 
         super.init(scrollViews: [tableView], accessoryView: gradientWrapperView)
     }
@@ -86,6 +89,10 @@ class LinkHardwareWalletViewController: KeyboardAwareViewController {
         subscribe(&cancellables, viewModel.proceedPublisher) { [weak self] accountType, name in
             self?.proceedToLink(accountType: accountType, name: name)
         }
+        subscribe(&cancellables, viewModel.$accountType) { [weak self] accountType in
+            self?.accountTypeTitle = accountType.title
+            self?.reloadTable()
+        }
 
         tableView.buildSections()
         isLoaded = true
@@ -106,8 +113,7 @@ class LinkHardwareWalletViewController: KeyboardAwareViewController {
         }
 
         tableView.buildSections()
-        tableView.beginUpdates()
-        tableView.endUpdates()
+        tableView.reloadData()
     }
 
     private func handleButtonState(enabled: Bool) {
@@ -151,7 +157,7 @@ extension LinkHardwareWalletViewController: SectionsDataSource {
                     tableView.universalRow48(
                         id: "account_type",
                         title: .body("link_hardware_wallet.account_type".localized),
-                        value: .subhead1(viewModel.accountType.title),
+                        value: .subhead1(self.accountTypeTitle),
                         accessoryType: .dropdown,
                         autoDeselect: true,
                         isFirst: true,

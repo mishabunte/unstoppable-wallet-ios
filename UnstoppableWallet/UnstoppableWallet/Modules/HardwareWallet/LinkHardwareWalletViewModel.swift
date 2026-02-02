@@ -74,22 +74,26 @@ extension LinkHardwareWalletViewModel {
 extension LinkHardwareWalletViewModel {
     enum HardwareAccountType: CaseIterable {
         case stellarAccount
+        case solanaAccount
 
         var title: String {
             switch self {
             case .stellarAccount: return "Stellar Address"
+            case .solanaAccount: return "Solana Address"
             }
         }
 
         var subtitle: String {
             switch self {
-            case .stellarAccount: return "(XLM, Stellar tokens)"
+            case .stellarAccount: return "(XLM, Stellar tokens, ...)"
+            case .solanaAccount: return "(SOL, Solana Tokens, ...)"
             }
         }
 
         func getAccountType() -> AccountType.Abstract {
             switch self {
             case .stellarAccount: return .stellarHardwareAccount
+            case .solanaAccount: return .solanaHardware
             }
         }
     }

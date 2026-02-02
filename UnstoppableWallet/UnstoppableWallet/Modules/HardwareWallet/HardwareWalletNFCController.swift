@@ -53,6 +53,7 @@ class NFCController: NSObject, NFCNDEFReaderSessionDelegate {
         //print("readerSeesion didInvalidateWithError")
         DispatchQueue.main.async {
             self.completion?(self.hitoNfcRequest.isDataTransmitted ? self.txraw : nil)
+            self.hitoNfcRequest.isDataTransmitted = false
         }
     }
 

@@ -2,20 +2,8 @@ import UIKit
 
 enum LinkHardwareWalletModule {
     static func viewController(sourceViewController: UIViewController? = nil) -> UIViewController {
-        let addressParserChain = AddressParserChain()
-        addressParserChain.append(handlers:
-//            AddressParserFactory.parserChainHandlers(blockchainType: .ethereum, withEns: true)
-//                + BtcBlockchainManager.blockchainTypes.flatMap {
-//                    AddressParserFactory.parserChainHandlers(blockchainType: $0, withEns: false)
-//                }
-//                + AddressParserFactory.parserChainHandlers(blockchainType: .tron)
-//                + AddressParserFactory.parserChainHandlers(blockchainType: .ton)
-                AddressParserFactory.parserChainHandlers(blockchainType: .stellar)
-        )
-        
         let service = LinkHardwareWalletService(
-            accountFactory: App.shared.accountFactory,
-            addressParserChain: addressParserChain
+            accountFactory: App.shared.accountFactory
         )
         let viewModel = LinkHardwareWalletViewModel(service: service)
         let viewController = LinkHardwareWalletViewController(viewModel: viewModel, sourceViewController: sourceViewController)

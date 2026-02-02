@@ -14,9 +14,9 @@ class LinkHardwareWalletService {
     private var accountType: AccountType.Abstract = .stellarHardwareAccount
     private var addressParserChain: AddressParserChain
 
-    init(accountFactory: AccountFactory, addressParserChain: AddressParserChain) {
+    init(accountFactory: AccountFactory) {
         self.accountFactory = accountFactory
-        self.addressParserChain = addressParserChain
+        self.addressParserChain = AddressParserFactory.parserChain(blockchainType: .stellar)
     }
     
     private func parseAddress() {
@@ -54,6 +54,8 @@ class LinkHardwareWalletService {
             switch self.accountType {
             case .stellarHardwareAccount:
                 accountType = .stellarHardwareAccount(accountId: parsed)
+            case .solanaHardware:
+                accountType = .solanaAddress(address: parsed)
             default:
                 state = .error(error: LinkError.unsupportedAccountType)
                 return
@@ -88,6 +90,14 @@ extension LinkHardwareWalletService {
 
     func set(accountType: AccountType.Abstract) {
         self.accountType = accountType
+        switch accountType {
+        case .stellarHardwareAccount:
+            self.addressParserChain = AddressParserFactory.parserChain(blockchainType: .stellar)
+        case .solanaHardware:
+            self.addressParserChain = AddressParserFactory.parserChain(blockchainType: .solana)
+        default:
+            self.addressParserChain = AddressParserFactory.parserChain(blockchainType: nil)
+        }
         parseAddress()
     }
 
