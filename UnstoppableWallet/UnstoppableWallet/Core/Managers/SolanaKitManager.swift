@@ -85,8 +85,6 @@ class SolanaKitManager {
 
         // Load balance and transaction data in background
         Task {
-            print("Started loading data for SolanaKit")
-            defer { print("Data stopped loading for solanakit")}
             try? await solanaKit.loadData()
         }
 

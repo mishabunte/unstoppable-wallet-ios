@@ -102,7 +102,7 @@ enum AddressParserFactory {
             let zcashParserItem = ZcashAddressParserItem(parserType: .validator(validator))
 
             return [zcashParserItem]
-        case .solana: return []
+        case .solana: return [SolanaAddressParserItem()]
         case .monero: return []
         case .ton:
             return [TonAddressParserItem()]

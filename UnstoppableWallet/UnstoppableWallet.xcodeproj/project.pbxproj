@@ -2096,6 +2096,8 @@
 		7A35C3B32E9438480031A959 /* Base58Swift in Frameworks */ = {isa = PBXBuildFile; productRef = 7A35C3B22E9438480031A959 /* Base58Swift */; };
 		7AB5F1D32F0C245C00BFC9F0 /* UnlinkHardwareWalletViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AB5F1D22F0C245C00BFC9F0 /* UnlinkHardwareWalletViewController.swift */; };
 		7AB5F1D42F0C245C00BFC9F0 /* UnlinkHardwareWalletViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AB5F1D22F0C245C00BFC9F0 /* UnlinkHardwareWalletViewController.swift */; };
+		7AD403882F1E8330006206D6 /* SolanaAddressParserItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AD403872F1E8329006206D6 /* SolanaAddressParserItem.swift */; };
+		7AD403892F1E8330006206D6 /* SolanaAddressParserItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AD403872F1E8329006206D6 /* SolanaAddressParserItem.swift */; };
 		7AE2C03C2E9D20D900748CB0 /* SolanaAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AE2C03B2E9D20D100748CB0 /* SolanaAdapter.swift */; };
 		7AE2C03D2E9D20D900748CB0 /* SolanaAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AE2C03B2E9D20D100748CB0 /* SolanaAdapter.swift */; };
 		7AE2C03F2E9D359900748CB0 /* SplTokenAdapter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AE2C03E2E9D359000748CB0 /* SplTokenAdapter.swift */; };
@@ -4475,6 +4477,7 @@
 		6BFA4E022D26B58A0044567A /* MarketAdvancedSearchCategoriesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarketAdvancedSearchCategoriesView.swift; sourceTree = "<group>"; };
 		7A35C3A82E9424AF0031A959 /* SolanaKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolanaKitManager.swift; sourceTree = "<group>"; };
 		7AB5F1D22F0C245C00BFC9F0 /* UnlinkHardwareWalletViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnlinkHardwareWalletViewController.swift; sourceTree = "<group>"; };
+		7AD403872F1E8329006206D6 /* SolanaAddressParserItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolanaAddressParserItem.swift; sourceTree = "<group>"; };
 		7AE2C03B2E9D20D100748CB0 /* SolanaAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolanaAdapter.swift; sourceTree = "<group>"; };
 		7AE2C03E2E9D359000748CB0 /* SplTokenAdapter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplTokenAdapter.swift; sourceTree = "<group>"; };
 		7AFA06ED2EA6640500456A2F /* OpenSeaNftProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenSeaNftProvider.swift; sourceTree = "<group>"; };
@@ -7307,6 +7310,7 @@
 		58AAA0C31F14444C22ACF393 /* Address */ = {
 			isa = PBXGroup;
 			children = (
+				7AD403872F1E8329006206D6 /* SolanaAddressParserItem.swift */,
 				D0E6EC682D5B5EB4006563D1 /* BlacklistAddressValidator.swift */,
 				D0E6EC652D5B5E71006563D1 /* HashDitAddressValidator.swift */,
 				D0E6EC622D5A0046006563D1 /* Eip20AddressValidator.swift */,
@@ -9959,6 +9963,7 @@
 				2FA5D98D7EE8F90744430243 /* TimeInterval.swift in Sources */,
 				11B3538BB9A4C913033D250F /* FeeCoinProvider.swift in Sources */,
 				11B3527D20636D21F0F45C80 /* CurrentDateProvider.swift in Sources */,
+				7AD403892F1E8330006206D6 /* SolanaAddressParserItem.swift in Sources */,
 				11B35DA5492B0C4EC7130A19 /* AppConfig.swift in Sources */,
 				D3833AF32BF20B8600ACECFB /* MarketPairsView.swift in Sources */,
 				11B350B22CCCFCD466BEB808 /* FeeRateProvider.swift in Sources */,
@@ -11509,6 +11514,7 @@
 				11B352184FCE4B2B3E68E459 /* CurrentDateProvider.swift in Sources */,
 				11B35AF1B38CDF6728158514 /* AppConfig.swift in Sources */,
 				11B3561A469C906B67F24459 /* FeeRateProvider.swift in Sources */,
+				7AD403882F1E8330006206D6 /* SolanaAddressParserItem.swift in Sources */,
 				D0532CBE2B149DEE0015DF40 /* WatchViewModel.swift in Sources */,
 				6BCD53162A161F4800993F20 /* BackupViewController.swift in Sources */,
 				D3833AF22BF20B8600ACECFB /* MarketPairsView.swift in Sources */,
