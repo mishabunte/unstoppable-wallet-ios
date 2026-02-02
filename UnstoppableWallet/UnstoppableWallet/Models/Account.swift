@@ -35,7 +35,7 @@ class Account: Identifiable {
     
     var hardwareWallet: Bool {
         switch type {
-        case .stellarHardwareAccount:
+        case .stellarHardwareAccount, .solanaHardware:
             return true
         default:
             return false

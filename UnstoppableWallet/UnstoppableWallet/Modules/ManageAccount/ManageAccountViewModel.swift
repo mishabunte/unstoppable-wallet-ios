@@ -69,7 +69,7 @@ class ManageAccountViewModel {
         case .mnemonic: keyActions.append(contentsOf: [.recoveryPhrase, .privateKeys, .publicKeys])
         case .evmPrivateKey: keyActions.append(contentsOf: [.privateKeys, .publicKeys])
         case .stellarSecretKey: keyActions.append(contentsOf: [.privateKeys])
-        case .evmAddress, .tronAddress, .tonAddress, .stellarAccount, .btcAddress, .solanaAddress, .stellarHardwareAccount: ()
+        case .evmAddress, .tronAddress, .tonAddress, .stellarAccount, .btcAddress, .solanaAddress, .solanaHardware, .stellarHardwareAccount: ()
         case let .hdExtendedKey(key):
             switch key {
             case .private: keyActions.append(contentsOf: [.privateKeys, .publicKeys])

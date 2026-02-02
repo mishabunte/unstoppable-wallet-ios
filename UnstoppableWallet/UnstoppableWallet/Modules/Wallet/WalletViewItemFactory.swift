@@ -139,7 +139,6 @@ class WalletViewItemFactory {
         guard let account, !account.watchAccount else {
             return [:]
         }
-        print("account.type: \(account.type)")
         switch account.type {
         case .evmPrivateKey, .hdExtendedKey, .mnemonic:
             return [
@@ -153,12 +152,17 @@ class WalletViewItemFactory {
                 .receive: .enabled,
             ]
         case .evmAddress, .tronAddress, .tonAddress, .stellarAccount, .btcAddress: return [:]
-        case .solanaAddress(address: let address):
+        case .solanaAddress:
             return [
                 .send: .disabled,
                 .receive: .enabled
             ]
         case .stellarHardwareAccount:
+            return [
+                .send: .enabled,
+                .receive: .enabled
+            ]
+        case .solanaHardware:
             return [
                 .send: .enabled,
                 .receive: .enabled

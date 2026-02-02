@@ -154,6 +154,8 @@ extension BlockchainType {
             }
         case .stellarSecretKey, .stellarAccount, .stellarHardwareAccount:
             return self == .stellar
+        case .solanaAddress, .solanaHardware:
+            return self == .solana
         case .tronAddress:
             return self == .tron
         case .tonAddress:

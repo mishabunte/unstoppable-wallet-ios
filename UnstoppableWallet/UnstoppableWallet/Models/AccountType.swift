@@ -19,6 +19,7 @@ enum AccountType: Identifiable {
     case hdExtendedKey(key: HDExtendedKey)
     case btcAddress(address: String, blockchainType: BlockchainType, tokenType: TokenType)
     case solanaAddress(address: String)
+    case solanaHardware(address: String)
 
     var id: Self {
         self
@@ -67,6 +68,8 @@ enum AccountType: Identifiable {
         case let .btcAddress(address, blockchainType, tokenType):
             privateData = "\(address)&\(blockchainType.uid)|\(tokenType.id)".data(using: .utf8) ?? Data()
         case let .solanaAddress(address):
+            privateData = Data(Base58.base58Decode(address) ?? [UInt8]())
+        case let .solanaHardware(address):
             privateData = Data(Base58.base58Decode(address) ?? [UInt8]())
         }
 
@@ -155,7 +158,7 @@ enum AccountType: Identifiable {
             }
         case let .btcAddress(_, blockchainType, tokenType):
             return token.blockchainType == blockchainType && token.type == tokenType
-        case .solanaAddress:
+        case .solanaAddress, .solanaHardware:
             switch (token.blockchainType, token.type) {
             case (.solana, .native), (.solana, .spl): return true
             default: return false
@@ -223,6 +226,8 @@ enum AccountType: Identifiable {
             return "BTC Address"
         case .solanaAddress:
             return "SOL Address"
+        case .solanaHardware:
+            return "SOL Hardware Account"
         }
     }
 
@@ -263,6 +268,8 @@ enum AccountType: Identifiable {
             return "btc_address"
         case .solanaAddress:
             return "solana_address"
+        case .solanaHardware:
+            return "solana_hardware"
         }
     }
 
@@ -279,6 +286,10 @@ enum AccountType: Identifiable {
         case let .stellarHardwareAccount(accountId):
             return accountId.shortened
         case let .btcAddress(address, _, _):
+            return address.shortened
+        case let .solanaAddress(address):
+            return address.shortened
+        case let .solanaHardware(address):
             return address.shortened
         default: return description
         }
@@ -347,6 +358,8 @@ extension AccountType {
             return AccountType.stellarSecretKey(secretSeed: string)
         case .solanaAddress:
             return AccountType.solanaAddress(address: string)
+        case .solanaHardware:
+            return AccountType.solanaAddress(address: string)
         case .hdExtendedKey:
             do {
                 return try AccountType.hdExtendedKey(key: HDExtendedKey(data: uniqueId))
@@ -395,6 +408,7 @@ extension AccountType {
         case hdExtendedKey = "hd_extended_key"
         case btcAddress = "btc_address_key"
         case solanaAddress = "solana_address"
+        case solanaHardware = "solana_hardware"
 
         init(_ type: AccountType) {
             switch type {
@@ -408,6 +422,7 @@ extension AccountType {
             case .hdExtendedKey: self = .hdExtendedKey
             case .btcAddress: self = .btcAddress
             case .solanaAddress: self = .solanaAddress
+            case .solanaHardware: self = .solanaHardware
             case .stellarHardwareAccount: self = .stellarHardwareAccount
             }
         }
@@ -447,6 +462,10 @@ extension AccountType: Hashable {
             return lhsKey == rhsKey
         case let (.btcAddress(lhsAddress, lhsBlockchainType, lhsTokenType), .btcAddress(rhsAddress, rhsBlockchainType, rhsTokenType)):
             return lhsAddress == rhsAddress && lhsBlockchainType == rhsBlockchainType && lhsTokenType == rhsTokenType
+        case let (.solanaHardware(lhsAddress),.solanaHardware(rhsAddress)):
+            return lhsAddress == rhsAddress
+        case let (.solanaAddress(lhsAddress),.solanaAddress(rhsAddress)):
+            return lhsAddress == rhsAddress
         default: return false
         }
     }
@@ -489,6 +508,9 @@ extension AccountType: Hashable {
             hasher.combine(tokenType)
         case let .solanaAddress(address: address):
             hasher.combine("solanaAddress")
+            hasher.combine(address)
+        case let .solanaHardware(address: address):
+            hasher.combine("solanaHardware")
             hasher.combine(address)
         }
     }

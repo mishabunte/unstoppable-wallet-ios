@@ -68,6 +68,11 @@ class AccountStorage {
                 return nil
             }
             type = .solanaAddress(address: address)
+        case .solanaHardware:
+            guard let address = record.dataKey else {
+                return nil
+            }
+            type = .solanaHardware(address: address)
         case .tonAddress:
             guard let address = record.dataKey else {
                 return nil
@@ -154,6 +159,9 @@ class AccountStorage {
             dataKey = address
         case let .solanaAddress(address: address):
             typeName = .solanaAddress
+            dataKey = address
+        case let .solanaHardware(address: address):
+            typeName = .solanaHardware
             dataKey = address
         case let .stellarAccount(accountId):
             typeName = .stellarAccount
@@ -294,6 +302,7 @@ extension AccountStorage {
         case hdExtendedKey
         case btcAddress
         case solanaAddress
+        case solanaHardware
     }
 
     private enum KeyName: String {
