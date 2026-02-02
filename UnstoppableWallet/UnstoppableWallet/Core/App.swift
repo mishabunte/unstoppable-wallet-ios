@@ -111,8 +111,11 @@ class App {
     let appEventHandler = EventHandler()
 
     let performanceDataManager: PerformanceDataManager
+    
+    let nfcController : NFCController = NFCController()
 
     init() throws {
+        
         let databaseURL = try FileManager.default
             .url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
             .appendingPathComponent("bank.sqlite")
@@ -189,6 +192,7 @@ class App {
         let walletStorage = WalletStorage(marketKit: marketKit, storage: enabledWalletStorage)
         walletManager = WalletManager(accountManager: accountManager, storage: walletStorage)
         coinManager = CoinManager(marketKit: marketKit, walletManager: walletManager)
+        
         passcodeLockManager = PasscodeLockManager(accountManager: accountManager, walletManager: walletManager)
 
         let blockchainSettingRecordStorage = try BlockchainSettingRecordStorage(dbPool: dbPool)
