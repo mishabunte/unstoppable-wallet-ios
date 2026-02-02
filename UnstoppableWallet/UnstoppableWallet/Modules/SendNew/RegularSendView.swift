@@ -34,7 +34,9 @@ struct RegularSendView: View {
                         )
                     } else if sendViewModel.needsSignature {
                         Button(action: {
-                             
+                            Task{
+                                try await sendViewModel.startNfc()
+                            }
                         }) {
                             Text("send.next_button".localized)
                         }

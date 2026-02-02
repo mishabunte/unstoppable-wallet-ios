@@ -1,4 +1,5 @@
 import MarketKit
+import Foundation
 
 protocol ISendHandler {
     var baseToken: Token { get }
@@ -8,6 +9,7 @@ protocol ISendHandler {
     func sendData(transactionSettings: TransactionSettings?) async throws -> ISendData
     func send(data: ISendData) async throws
     func sendSigned(data: ISendData) async throws
+    func serialize(data: ISendData) async throws -> String
 }
 
 extension ISendHandler {

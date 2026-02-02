@@ -19,7 +19,8 @@ class SendViewModel: ObservableObject {
 
     private let address: String?
     public let isHardware: Bool
-    private var signedTransaction: String? = nil
+    private var signedTransaction: String = ""
+    private var NfcError: Error? = nil
 
     @Published var rates = [String: Decimal]()
 
@@ -72,7 +73,7 @@ class SendViewModel: ObservableObject {
     }
     
     var needsSignature: Bool {
-        return self.isHardware ? signedTransaction == nil : false
+        return self.isHardware ? signedTransaction.isEmpty : false
     }
 
     init(sendData: SendData, address: String? = nil, isHardware: Bool = false) {
@@ -162,7 +163,22 @@ extension SendViewModel {
     
     func startNfc() async throws {
         do {
+            guard let handler else {
+                throw SendError.noHandler
+            }
             
+            guard let data = state.data else {
+                throw SendError.noData
+            }
+            
+            let unsignedTx = try await handler.serialize(data: data)
+            App.shared.nfcController.signStellarXDR(unsignedTransaction: unsignedTx) { txraw in
+                guard let txraw = txraw else {
+                    self.NfcError = SendError.noData
+                    return
+                }
+                self.NfcError = nil
+            }
         } catch {
             await set(sending: false)
             errorSubject.send(error.smartDescription)

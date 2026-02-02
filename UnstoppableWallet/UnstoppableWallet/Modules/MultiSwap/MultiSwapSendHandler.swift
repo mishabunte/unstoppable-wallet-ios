@@ -61,6 +61,11 @@ extension MultiSwapSendHandler: ISendHandler {
     func sendSigned(data: ISendData) async throws {
         // not implemented
     }
+    
+    func serialize(data: ISendData) async throws -> String {
+        // not implemented
+        return ""
+    }
 }
 
 extension MultiSwapSendHandler {
