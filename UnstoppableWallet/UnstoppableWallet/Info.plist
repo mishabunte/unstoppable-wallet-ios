@@ -85,7 +85,7 @@
 	<key>MarketApiUrl</key>
 	<string>${market_api_url}</string>
 	<key>NFCReaderUsageDescription</key>
-	<string>We need to access hardware device using nfc</string>
+	<string>We need NFC to communicate with hardware device</string>
 	<key>NSCameraUsageDescription</key>
 	<string>We need access to camera to scan QR codes.</string>
 	<key>NSFaceIDUsageDescription</key>

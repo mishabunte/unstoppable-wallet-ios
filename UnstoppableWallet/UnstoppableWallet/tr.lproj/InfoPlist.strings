@@ -1,3 +1,4 @@
 "NSCameraUsageDescription" = "QR kodlarını taramak için uygulamanın kameraya erişmesi gerekiyor.";
 "NSFaceIDUsageDescription" = "FaceID, cüzdanın kilidini açmak için kullanılacaktır.";
 "NSPhotoLibraryAddUsageDescription" = "NFT resimlerini kaydetmek için fotoğraf kitaplığına erişmemiz gerekiyor";
+"NFCReaderUsageDescription" = "We need to access hardware device using nfc";
