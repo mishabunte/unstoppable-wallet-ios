@@ -67,7 +67,7 @@ extension TonConnectSendHandler: ISendHandler {
         try await tonConnectManager.approve(request: request, boc: boc)
     }
     
-    func sendSigned(data: ISendData) async throws {
+    func sendSigned(signedTx: String) async throws {
         // not implemented
     }
     

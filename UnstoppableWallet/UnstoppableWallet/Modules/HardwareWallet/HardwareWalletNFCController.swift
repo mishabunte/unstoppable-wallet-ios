@@ -1,14 +1,12 @@
-//
-//  NFCViewController.swift
-//
 
 import CoreNFC
 import SwiftUI
-
+import MarketKit
 
 class NFCController: NSObject, NFCNDEFReaderSessionDelegate {
     
-    static var shared = NFCController()
+    
+    private var session: NFCNDEFReaderSession?
     
     struct HitoNfcRequest {
         
@@ -21,13 +19,13 @@ class NFCController: NSObject, NFCNDEFReaderSessionDelegate {
             func getPrefix() -> String {
                 switch self {
                 case .eth_send:
-                    return "eth:"
+                    return "eth.sign:"
                 case .authentication:
                     return "hito.auth:"
                 case .solana_send:
-                    return "solana:"
+                    return "solana.sign:"
                 case .stellar_send:
-                    return "stellar:"
+                    return "stellar.sign:"
                 }
             }
         }
@@ -50,10 +48,10 @@ class NFCController: NSObject, NFCNDEFReaderSessionDelegate {
     }
 
     func readerSession(_ session: NFCNDEFReaderSession, didInvalidateWithError error: Error) {
-        //print("readerSeesion didInvalidateWithError")
         DispatchQueue.main.async {
             self.completion?(self.hitoNfcRequest.isDataTransmitted ? self.txraw : nil)
             self.hitoNfcRequest.isDataTransmitted = false
+            self.session = nil
         }
     }
 
@@ -114,22 +112,22 @@ class NFCController: NSObject, NFCNDEFReaderSessionDelegate {
     var hitoNfcRequest: HitoNfcRequest = HitoNfcRequest(type: .eth_send, payload: "")
 
     func startNfcSession(type: HitoNfcRequest.HitoNfcRequestType, messageText: String, completion: @escaping (String?) -> Void) {
-        
+
         self.completion = completion
+        print("try sending nfc: \(type.getPrefix() + messageText)")
         hitoNfcRequest = HitoNfcRequest(type: type, payload: type.getPrefix() + messageText)
         guard NFCNDEFReaderSession.readingAvailable else {
-            //let alertController = UIAlertController(
-            //   title: "Scanning Not Supported",
-            //message: "This device doesn't support tag scanning.",
-            //preferredStyle: .alert
-            //)
-            //alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
-            //self.present(alertController, animated: true, completion: nil)
             return
         }
-        let session = NFCNDEFReaderSession(delegate: self, queue: nil, invalidateAfterFirstRead: false)
-        session.alertMessage = "Tap to Confirm"
-        session.begin()
+        DispatchQueue.main.async {
+            self.session = NFCNDEFReaderSession(
+                delegate: self,
+                queue: nil,
+                invalidateAfterFirstRead: false
+            )
+            self.session?.alertMessage = "Tap to Confirm"
+            self.session?.begin()
+        }
     }
     
     func signEvmRequest(address: String, unsignedTransaction: String, completion: @escaping (String?) -> Void) {
@@ -138,8 +136,17 @@ class NFCController: NSObject, NFCNDEFReaderSessionDelegate {
         startNfcSession(type: .eth_send, messageText: message, completion: completion)
     }
     
-    func signStellarXDR(unsignedTransaction: String, completion: @escaping (String?) -> Void) {
-        startNfcSession(type: .stellar_send, messageText: unsignedTransaction, completion: completion)
+    func sendSignRequest(unsignedTransaction: String, blockchainType: BlockchainType, completion: @escaping (String?) -> Void) {
+        let sendType : HitoNfcRequest.HitoNfcRequestType
+        
+        switch blockchainType {
+        case .stellar: sendType = .stellar_send
+        case .solana: sendType = .solana_send
+        case .ethereum: sendType = .eth_send
+        default: return
+        }
+        
+        startNfcSession(type: sendType, messageText: unsignedTransaction, completion: completion)
     }
     
     func sendAuthToken(completion: @escaping (String?) -> Void) async {

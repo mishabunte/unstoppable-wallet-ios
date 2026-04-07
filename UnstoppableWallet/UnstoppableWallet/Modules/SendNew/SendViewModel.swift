@@ -18,9 +18,11 @@ class SendViewModel: ObservableObject {
     let currency: Currency
 
     private let address: String?
+    
     public let isHardware: Bool
-    private var signedTransaction: String = ""
+    @Published private var signedTransaction: String = ""
     private var NfcError: Error? = nil
+    @Published private var NfcResponse: String = ""
 
     @Published var rates = [String: Decimal]()
 
@@ -61,7 +63,11 @@ class SendViewModel: ObservableObject {
             return false
         }
         
-        if self.needsSignature {
+        if self.needsSigning {
+            return false
+        }
+        
+        if self.needsScanning {
             return false
         }
 
@@ -72,7 +78,11 @@ class SendViewModel: ObservableObject {
         return true
     }
     
-    var needsSignature: Bool {
+    var needsSigning: Bool {
+        return self.isHardware ? NfcResponse.isEmpty : false
+    }
+    
+    var needsScanning: Bool {
         return self.isHardware ? signedTransaction.isEmpty : false
     }
 
@@ -81,7 +91,6 @@ class SendViewModel: ObservableObject {
         currency = currencyManager.baseCurrency
         self.address = address
         self.isHardware = isHardware
-        print("is hardware: \(self.isHardware)")
 
         if let handler {
             transactionService = TransactionServiceFactory.transactionService(blockchainType: handler.baseToken.blockchainType, initialTransactionSettings: handler.initialTransactionSettings)
@@ -161,29 +170,66 @@ extension SendViewModel {
         .erased()
     }
     
-    func startNfc() async throws {
-        do {
-            guard let handler else {
-                throw SendError.noHandler
-            }
-            
-            guard let data = state.data else {
-                throw SendError.noData
-            }
-            
-            let unsignedTx = try await handler.serialize(data: data)
-            App.shared.nfcController.signStellarXDR(unsignedTransaction: unsignedTx) { txraw in
-                guard let txraw = txraw else {
-                    self.NfcError = SendError.noData
-                    return
-                }
-                self.NfcError = nil
-            }
-        } catch {
-            await set(sending: false)
-            errorSubject.send(error.smartDescription)
-            throw error
+    func startNfc() {
+        
+        guard let handler else {
+//            throw SendError.noHandler
+            return
         }
+        
+        guard let data = state.data else {
+//            throw SendError.noData
+            return
+        }
+        
+        syncTask = nil
+
+        if !state.isSyncing {
+            state = .syncing
+        }
+        
+        syncTask = Task { [weak self, handler] in
+            var state : State
+            do {
+                let unsignedTx = try await handler.serialize(data: data)
+                let payload = "cee0302d59844d32bdca915c8203dd44b33fbb7edc19051ea37abedf28ecd472:" + unsignedTx
+                let blockchainType = handler.baseToken.blockchainType
+                
+                App.shared.nfcController.sendSignRequest(unsignedTransaction: payload, blockchainType: blockchainType) { txraw in
+                    guard let txraw = txraw else {
+                        self?.NfcError = SendError.noData
+                        self?.NfcResponse = "SOSITE"
+                        return
+                    }
+                    self?.NfcError = nil
+                    self?.NfcResponse = txraw
+                }
+                
+                if let nfcError = self?.NfcError {
+                    throw nfcError
+                }
+            } catch {
+                await self?.set(sending: false)
+            }
+            
+            state = .success(data: data)
+            
+            if !Task.isCancelled {
+                await MainActor.run { [weak self, state] in
+                    self?.state = state
+                }
+            }
+        }
+        .erased()
+    }
+    
+    func onScanQr(text: String) {
+        let txUrl = URL(string: text)
+        guard let url = txUrl, let fragment = url.fragment() else {
+            return
+        }
+        let value = fragment.hasPrefix("!") ? String(fragment.dropFirst()) : fragment
+        self.signedTransaction = value
     }
 
     func send() async throws {
@@ -199,7 +245,7 @@ extension SendViewModel {
             await set(sending: true)
             
             if self.isHardware {
-                _ = try await handler.sendSigned(data: data)
+                try await handler.sendSigned(signedTx: signedTransaction)
             } else {
                 _ = try await handler.send(data: data)
             }

@@ -54,7 +54,7 @@ extension ShieldSendHandler: ISendHandler {
         try await adapter.send(proposal: data.proposal)
     }
     
-    func sendSigned(data: ISendData) async throws {
+    func sendSigned(signedTx: String) async throws {
         // not implemented
     }
     

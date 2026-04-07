@@ -97,7 +97,7 @@ extension TonSendHandler: ISendHandler {
         try await TonKit.Kit.send(boc: boc, contract: contract, network: TonKitManager.network)
     }
     
-    func sendSigned(data: ISendData) async throws {
+    func sendSigned(signedTx: String) async throws {
         // not implemented
     }
     

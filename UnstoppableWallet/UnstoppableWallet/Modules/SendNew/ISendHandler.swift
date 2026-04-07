@@ -8,7 +8,7 @@ protocol ISendHandler {
     var initialTransactionSettings: InitialTransactionSettings? { get }
     func sendData(transactionSettings: TransactionSettings?) async throws -> ISendData
     func send(data: ISendData) async throws
-    func sendSigned(data: ISendData) async throws
+    func sendSigned(signedTx: String) async throws
     func serialize(data: ISendData) async throws -> String
 }
 

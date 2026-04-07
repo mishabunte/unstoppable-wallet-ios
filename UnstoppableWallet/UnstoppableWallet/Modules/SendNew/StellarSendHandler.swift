@@ -51,7 +51,7 @@ extension StellarSendHandler: ISendHandler {
                     totalNativeAmount += amount
                 }
 
-                let destinationAccount = try await StellarKit.Kit.account(accountId: accountId)
+                let destinationAccount = try await StellarKit.Kit.account(accountId: accountId, testNet: true)
                 let operation: stellarsdk.Operation
 
                 if let destinationAccount {
@@ -106,24 +106,19 @@ extension StellarSendHandler: ISendHandler {
         _ = try await StellarKit.Kit.send(operations: operations, memo: memo, keyPair: keyPair, testNet: false)
     }
     
-    func sendSigned(data: ISendData) async throws {
-        guard let data = data as? SendData, let operations = data.operations else {
-            throw SendError.invalidData
-        }
-
-        let memo = data.memo.map { Memo.text($0) } ?? Memo.none
-
-        _ = try await StellarKit.Kit.send(operations: operations, memo: memo, keyPair: keyPair, testNet: false)
+    func sendSigned(signedTx: String) async throws {
+        _ = try await StellarKit.Kit.sendSigned(envelopeXdr: signedTx, keyPair: keyPair, testNet: true) // TODO: CHANGE
     }
     
     func serialize(data: ISendData) async throws -> String {
         guard let data = data as? SendData, let operations = data.operations else {
             throw SendError.invalidData
         }
-
+        
         let memo = data.memo.map { Memo.text($0) } ?? Memo.none
         
         let xdr = try await StellarKit.Kit.getUnsignedTransaction(keyPair: keyPair, operations: operations, memo: memo, testNet: true)
+    
         return xdr
     }
 }
